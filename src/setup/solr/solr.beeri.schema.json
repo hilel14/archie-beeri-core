@@ -1,0 +1,96 @@
+{
+    "add-field": {
+        "name": "dcTitle",
+        "type": "text_general",
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "dcTitleString",
+        "type": "string",
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "dcDate",
+        "type": "pdates",
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "dcCreator",
+        "type": "string",
+        "multiValued": true
+    },
+    "add-field": {
+        "name": "dcDescription",
+        "type": "text_general",
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "dcSubject",
+        "type": "string",
+        "multiValued": true
+    },
+    "add-field": {
+        "name": "dcFormat",
+        "type": "string",
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "dcType",
+        "type": "string",
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "dcIsPartOf",
+        "type": "string",
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "dcAccessRights",
+        "type": "string",
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "importTime",
+        "type": "pdate",
+        "multiValued": false,
+        "default": "NOW"
+    },
+    "add-field": {
+        "name": "fileDigest",
+        "type": "string",
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "storageLocation",
+        "type": "string",
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "content",
+        "type": "text_general",
+        "indexed": false,
+        "multiValued": true
+    },
+    "add-field": {
+        "name": "sortCode",
+        "type": "plong",
+        "multiValued": false,
+        "docValues": true
+    },
+    "add-copy-field": {
+        "source": "dcTitle",
+        "dest": "dcTitleString"
+    },
+    "add-copy-field": {
+        "source": "dcTitle",
+        "dest": "_text_"
+    },
+    "add-copy-field": {
+        "source": "dcDescription",
+        "dest": "_text_"
+    },
+    "add-copy-field": {
+        "source": "content",
+        "dest": "_text_"
+    }
+}

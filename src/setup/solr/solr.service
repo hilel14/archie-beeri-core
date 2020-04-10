@@ -1,0 +1,15 @@
+# /etc/systemd/system/solr.service
+
+[Unit]
+Description=Apache Solr
+After=syslog.target network.target
+
+[Service]
+Type=forking
+ExecStart=/opt/apache/solr/bin/solr start
+SuccessExitStatus=143
+PIDFile=/opt/apache/solr/bin/solr-8983.pid
+User=archie
+
+[Install]
+WantedBy=multi-user.target

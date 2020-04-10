@@ -1,0 +1,12 @@
+package org.hilel14.archie.beeri.core.jobs.tasks;
+
+import org.hilel14.archie.beeri.core.jobs.model.ImportFileTicket;
+
+/**
+ *
+ * @author hilel14
+ */
+public interface TaskProcessor {
+
+    public void proccess(ImportFileTicket ticket) throws Exception;
+}

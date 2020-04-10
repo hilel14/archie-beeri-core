@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Copy this file to /opt/apache/tomcat/conf/Catalina/localhost -->
+
+<Context docBase="/opt/hilel14/archie/beeri/webapp">
+	
+    <!--
+    brokerURL="vm://localhost"
+    brokerURL="tcp://localhost:61616"
+    -->
+    
+    <Resource
+        name="jms/archie"
+        auth="Container"
+        type="org.apache.activemq.ActiveMQConnectionFactory"
+        description="JMS Connection Factory"
+        factory="org.apache.activemq.jndi.JNDIReferenceFactory"
+        brokerURL="tcp://localhost:61616"
+        brokerName="LocalActiveMQBroker"/>
+
+    <!--
+    dbcp factory options:
+    org.apache.commons.dbcp.BasicDataSourceFactory
+    org.apache.tomcat.dbcp.dbcp2.BasicDataSourceFactory
+    -->
+    <Resource
+        name="jdbc/ArchieDB"
+        type="javax.sql.DataSource"
+        factory="org.apache.tomcat.dbcp.dbcp2.BasicDataSourceFactory"
+        auth="Container"
+        driverClassName="org.mariadb.jdbc.Driver"
+        url="jdbc:mariadb://localhost:3306/archie_beeri"
+        username="archie"
+        password="12345678"
+    />
+
+</Context>
