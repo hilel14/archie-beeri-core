@@ -3,6 +3,7 @@ package org.hilel14.archie.beeri.core;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 public class Config {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
+    private final String archieEnv;
     private final Path importFolder;
     private final Path assetStore;
     private final Path mailFolder;
@@ -31,7 +33,7 @@ public class Config {
     private final String tesseractCommand;
     private final String convertImageCommand;
     private final String convertPdfCommand;
-    private String jmsQueueName;
+    private final String jmsQueueName;
     private BasicDataSource dataSource;
     private ActiveMQConnectionFactory jmsFactory;
     private final SolrClient solrClient;
@@ -49,6 +51,9 @@ public class Config {
 
     public Config() throws IOException {
         Properties p = loadProperties();
+        // general properties
+        archieEnv = p.getProperty("archie.environment");
+        LOGGER.info("archieEnv = {}", archieEnv);
         // io properties
         assetStore = Paths.get(p.getProperty("asset.store"));
         importFolder = Paths.get(p.getProperty("import.folder"));
@@ -71,27 +76,35 @@ public class Config {
 
     private Properties loadProperties() throws IOException {
         Properties properties = new Properties();
-        // get properties from classpath
+        // First priority: get location of properties file from the environment
+        String archieHome = System.getProperty("archie.home");
+        LOGGER.info("archieHome = {}", archieHome);        
+        if (archieHome == null) {
+            LOGGER.warn("System property archieHome not found");
+        } else {
+            Path propertiesFile = Paths.get(archieHome)
+                    .resolve("resources")
+                    .resolve("archie.beeri.properties");
+            if (Files.exists(propertiesFile)) {
+                LOGGER.info("Loading properties from file {}", propertiesFile);
+                try (FileInputStream inputStream = new FileInputStream(propertiesFile.toString())) {
+                    properties.load(inputStream);
+                }
+                return properties;
+            } else {
+                LOGGER.warn("Properties file not found: {}", propertiesFile);
+            }
+        }
+        // Second priority: get properties file from classpath
         String name = "/archie.beeri.properties";
         InputStream in = Config.class.getResourceAsStream(name);
-        if (in != null) {
+        if (in == null) {
+            throw new IOException("Classpath not found: " + name);
+        } else {
             LOGGER.info("Loading properties from classpath resource {}", name);
             properties.load(in);
             return properties;
         }
-        // get properties from environment
-        String archieHome = System.getProperty("archie.home");
-        if (archieHome == null) {
-            LOGGER.warn("System property archieHome not found: {}", archieHome);
-        }
-        Path propertiesFile = Paths.get(archieHome)
-                .resolve("resources")
-                .resolve("archie.beeri.properties");
-        LOGGER.info("Loading properties from file {}", propertiesFile);
-        try (FileInputStream inputStream = new FileInputStream(propertiesFile.toString())) {
-            properties.load(inputStream);
-        }
-        return properties;
     }
 
     private void createJmsConnectionFactory(Properties props) {
@@ -207,6 +220,13 @@ public class Config {
      */
     public String getJmsQueueName() {
         return jmsQueueName;
+    }
+
+    /**
+     * @return the archieEnv
+     */
+    public String getArchieEnv() {
+        return archieEnv;
     }
 
 }

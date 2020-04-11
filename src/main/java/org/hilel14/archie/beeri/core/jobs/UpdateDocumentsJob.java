@@ -41,15 +41,17 @@ public class UpdateDocumentsJob {
     final Config config;
     final DateFormat iso8601TimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     final String[] previewFileNameExtentions = new String[]{"png", "txt"};
-    final ObjectMapper mapper = new ObjectMapper();
 
     public static void main(String[] args) {
         Path in = Paths.get(args[0]);
         try {
             Config config = new Config();
             String attributes = new String(Files.readAllBytes(in));
+            List<ArchieDocument> docs
+                    = new ObjectMapper().readValue(attributes, new TypeReference<List<ArchieDocument>>() {
+                    });
             UpdateDocumentsJob job = new UpdateDocumentsJob(config);
-            job.run(attributes);
+            job.run(docs);
         } catch (Exception ex) {
             LOGGER.error(null, ex);
         }
@@ -59,14 +61,7 @@ public class UpdateDocumentsJob {
         this.config = config;
     }
 
-    public void run(String attributes) throws Exception {
-        List<ArchieDocument> docs
-                = mapper.readValue(attributes, new TypeReference<List<ArchieDocument>>() {
-                });
-        runDirectly(docs);
-    }
-
-    public void runDirectly(List<ArchieDocument> docs) throws SolrServerException, IOException {
+    public void run(List<ArchieDocument> docs) throws SolrServerException, IOException {
         LOGGER.debug("Updating {} documents", docs.size());
         for (ArchieDocument archdoc : docs) {
             update(archdoc, config.getSolrClient());
@@ -81,7 +76,7 @@ public class UpdateDocumentsJob {
         Iterable<CSVRecord> records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);
         for (CSVRecord record : records) {
             count++;
-            ArchieDocument doc = mapper.convertValue(record.toMap(), ArchieDocument.class);
+            ArchieDocument doc = new ObjectMapper().convertValue(record.toMap(), ArchieDocument.class);
             update(doc, config.getSolrClient());
         }
         LOGGER.info("Commiting changes to {} documents", count);

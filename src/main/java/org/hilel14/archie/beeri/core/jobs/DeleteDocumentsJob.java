@@ -34,9 +34,13 @@ public class DeleteDocumentsJob {
         Path in = Paths.get(args[0]);
         try {
             Config config = new Config();
-            String attributes = new String(Files.readAllBytes(in));
+            String jobSpec = new String(Files.readAllBytes(in));
+            List<String> ids
+                    = new ObjectMapper()
+                            .readValue(jobSpec, new TypeReference<List<String>>() {
+                            });
             DeleteDocumentsJob job = new DeleteDocumentsJob(config);
-            job.run(attributes);
+            job.run(ids);
         } catch (Exception ex) {
             LOGGER.error(null, ex);
         }
@@ -46,15 +50,7 @@ public class DeleteDocumentsJob {
         this.config = config;
     }
 
-    public void run(String attributes) throws Exception {
-        List<String> ids
-                = new ObjectMapper()
-                        .readValue(attributes, new TypeReference<List<String>>() {
-                        });
-        runDirectly(ids);
-    }
-
-    public void runDirectly(List<String> ids) throws IOException, SolrServerException {
+    public void run(List<String> ids) throws IOException, SolrServerException {
         LOGGER.debug("Deleting documents {}", ids);
         List<ArchieDocument> files = deleteDocuments(ids);
         LOGGER.debug("Deleting {} files", files.size());

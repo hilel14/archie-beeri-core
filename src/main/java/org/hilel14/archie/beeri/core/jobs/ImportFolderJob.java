@@ -37,9 +37,10 @@ public class ImportFolderJob {
         Path in = Paths.get(args[0]);
         try {
             Config config = new Config();
-            String attributes = new String(Files.readAllBytes(in));
+            String jobSpec = new String(Files.readAllBytes(in));
+            ImportFolderForm form = ImportFolderForm.unmarshal(jobSpec);
             ImportFolderJob job = new ImportFolderJob(config);
-            job.run(attributes);
+            job.run(form);
         } catch (Exception ex) {
             LOGGER.error(null, ex);
         }
@@ -60,8 +61,7 @@ public class ImportFolderJob {
         processors.add(new FileInstaller(config));
     }
 
-    public void run(String attributes) throws Exception {
-        ImportFolderForm form = ImportFolderForm.unmarshal(attributes);
+    public void run(ImportFolderForm form) throws Exception {
         LOGGER.info("Importing folder {}", form.getFolderName());
         List<String> items = getFolderItems(form.getFolderName());
         LOGGER.debug("Folder {} contains {} items, textAction = {}, addFileNamesTo = {}",
