@@ -1,2 +1,0 @@
-curl http://localhost:8983/solr/archie/replication?command=backup
-curl http://localhost:8983/solr/archie/replication?command=restore

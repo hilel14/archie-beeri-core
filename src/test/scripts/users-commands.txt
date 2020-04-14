@@ -1,8 +1,0 @@
-curl -X POST --header 'Content-Type: application/json' --data '{"username":"user1", "password":"123", "role":"manager"}' http://localhost:8080/archie-kedma-ws-1.0-SNAPSHOT/webapi/users
-curl -X POST --header 'Content-Type: application/json' --data '{"username":"user1", "password":"123"}' http://localhost:8080/archie-kedma-ws-1.0-SNAPSHOT/webapi/users/authenticate
-
-curl -X PUT --header 'Content-Type: application/json' --data '{"username":"user1", "password":"123", "role":"manager"}' http://localhost:8080/archie-kedma-ws-1.0-SNAPSHOT/webapi/users
-curl -X DELETE --header 'Content-Type: test/plain' http://localhost:8080/archie-kedma-ws-1.0-SNAPSHOT/webapi/users/1
-
-Add user1 as manager with password 12345678:
-INSERT INTO users (username, fullname, rolename, password) VALUES ('user1','User One','manager','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe');

@@ -1,4 +1,0 @@
-SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE import_file_log;
-TRUNCATE TABLE import_folder_log;
-SET FOREIGN_KEY_CHECKS = 1;
