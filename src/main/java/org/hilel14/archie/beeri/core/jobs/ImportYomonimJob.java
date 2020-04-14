@@ -45,24 +45,6 @@ public class ImportYomonimJob {
     PDFTextStripperByArea stripperByArea;
     ImportFileJob importFileJob;
 
-    public static void main(String[] args) {
-        try {
-            Config config = new Config();
-            ImportYomonimJob job = new ImportYomonimJob(config);
-            job.run(null);
-        } catch (Exception ex) {
-            LOGGER.error(null, ex);
-        }
-    }
-
-    static void printLoggingLevels() {
-        LOGGER.trace("TRACE logging level enabled");
-        LOGGER.debug("DEBUG logging level enabled");
-        LOGGER.info("INFO logging level enabled");
-        LOGGER.warn("WARN logging level enabled");
-        LOGGER.error("ERROR logging level enabled");
-    }
-
     public ImportYomonimJob(Config config) throws IOException {
         this.config = config;
         inboxFolder = config.getMailFolder().resolve("inbox");
@@ -76,7 +58,7 @@ public class ImportYomonimJob {
         importFileJob = new ImportFileJob(config);
     }
 
-    public void run(String attributes) throws Exception {
+    public void run() throws Exception {
         LOGGER.info("{} files found in inbox", inboxFolder.toFile().list().length);
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(inboxFolder)) {
             for (Path path : stream) {
@@ -154,7 +136,7 @@ public class ImportYomonimJob {
         form.setAddFileNamesTo("dcTitle");
         form.setDcAccessRights("private");
         form.setDcDate(date);
-        form.setDcIsPartOf("מזכירות >> יומונים");
+        form.setDcIsPartOf("עיתונות מקומית >> יומון בארי");
         form.setDcTitle("יומון ");
         form.setDcType("text");
         form.setFolderName("yomonim");
