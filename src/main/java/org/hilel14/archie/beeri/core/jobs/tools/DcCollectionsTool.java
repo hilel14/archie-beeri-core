@@ -29,22 +29,6 @@ public class DcCollectionsTool {
         this.config = config;
     }
 
-    public List<ArchieDocument> splitCollectionsExpression(String expression) {
-        List<ArchieDocument> docs = new ArrayList<>();
-        String[] parts = expression.split(SEPARATOR);
-        ArchieDocument doc = new ArchieDocument();
-        doc.setDcTitle(parts[0]);
-        docs.add(doc);
-        for (int i = 1; i < parts.length; i++) {
-            String parent = doc.getDcTitle();
-            doc = new ArchieDocument();
-            doc.setDcIsPartOf(parent);
-            doc.setDcTitle(parent + SEPARATOR + parts[i]);
-            docs.add(doc);
-        }
-        return docs;
-    }
-
     public void autoCreateCollections(String expression) throws SolrServerException, IOException {
         LOGGER.debug("analyzing hierarchy expression {}", expression);
         if (expression != null) {
@@ -61,6 +45,22 @@ public class DcCollectionsTool {
                 }
             }
         }
+    }
+
+    private List<ArchieDocument> splitCollectionsExpression(String expression) {
+        List<ArchieDocument> docs = new ArrayList<>();
+        String[] parts = expression.split(SEPARATOR);
+        ArchieDocument doc = new ArchieDocument();
+        doc.setDcTitle(parts[0]);
+        docs.add(doc);
+        for (int i = 1; i < parts.length; i++) {
+            String parent = doc.getDcTitle();
+            doc = new ArchieDocument();
+            doc.setDcIsPartOf(parent);
+            doc.setDcTitle(parent + SEPARATOR + parts[i]);
+            docs.add(doc);
+        }
+        return docs;
     }
 
     private void createCollection(String title, String parent) throws SolrServerException, IOException {
