@@ -45,6 +45,16 @@ public class ImportYomonimJob {
     PDFTextStripperByArea stripperByArea;
     ImportFileJob importFileJob;
 
+    public static void main(String[] args) {
+        try {
+            Config config = new Config();
+            ImportYomonimJob job = new ImportYomonimJob(config);
+            job.run();
+        } catch (Exception ex) {
+            LOGGER.error(null, ex);
+        }
+    }
+
     public ImportYomonimJob(Config config) throws IOException {
         this.config = config;
         inboxFolder = config.getMailFolder().resolve("inbox");

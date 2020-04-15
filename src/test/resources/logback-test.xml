@@ -1,0 +1,28 @@
+<configuration>
+
+    <!--
+    slf4j levels: TRACE DEBUG INFO WARN ERROR
+    https://mkyong.com/logging/logback-xml-example/
+    http://logback.qos.ch/manual/layouts.html#conversionWord
+    -->
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>
+                    %date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{5} %method - %msg%n
+                </Pattern>
+            </layout>
+        </encoder>
+    </appender>
+
+    <logger name="org.hilel14.archie.beeri" level="debug" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <root level="error">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>
+

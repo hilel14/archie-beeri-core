@@ -1,0 +1,55 @@
+<configuration>
+
+    <!--
+    slf4j levels: TRACE DEBUG INFO WARN ERROR
+    https://mkyong.com/logging/logback-xml-example/
+    http://logback.qos.ch/manual/layouts.html#conversionWord
+    -->
+
+    <property name="DEV_HOME" value="/var/opt/archie/beeri/logs" />
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>
+                    %date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{5} %method - %msg%n
+                </Pattern>
+            </layout>
+        </encoder>
+    </appender>
+
+    <appender name="FILE-AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        
+        <file>${DEV_HOME}/archie.log</file>
+        
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>
+                    %date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{5} %method - %msg%n
+                </Pattern>
+            </layout>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${DEV_HOME}/archived/archie.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+
+    </appender>
+
+    <logger name="org.hilel14.archie.beeri" level="info" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE-AUDIT"/>
+    </logger>
+
+    <root level="error">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE-AUDIT"/>
+    </root>
+
+</configuration>
+

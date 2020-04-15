@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+    <doc>
+        <field name="id">1</field>
+        <field name="dcTitle">צ'יקיטה יושנת</field>
+        <field name="dcDate">1984-03-22T10:52:03Z</field>
+        <field name="dcCreator">הלל י. שרודק</field>
+        <field name="dcDescription">מימין לשמאל: צ'יקיטה, קוקה, פרדי, קוקוס ודמבו</field>
+        <field name="dcSubject">חיות מחמד</field>
+        <field name="dcSubject">חתולים</field>
+        <field name="storageLocation">בע"ח א1</field>
+        <field name="dcType">image</field>
+        <field name="dcFormat">jpg</field>
+        <field name="dcIsPartOf">האוסף הפרטי שלי::ארגזים מהדירה הישנה</field>
+        <field name="importTime">1974-03-22T10:52:03Z</field>
+    </doc>
+    <doc>
+        <field name="id">2</field>
+        <field name="dcTitle">יום העליה לנחביר בלילה</field>
+        <field name="dcDate">1947-03-22T10:52:03Z</field>
+        <field name="dcCreator">ראובן קלמר</field>
+        <field name="dcCreator">איזי רייך</field>
+        <field name="dcDescription">מספר שעות לאחר סיום צום יום הכיפורים החלו בהעמסת הציוד על המשאיות ובסביבות חצות יצאו משש נקודות הבסיס שיירות של מכוניות לעבר 11 הנקודות. השתתפו במבצע כ- 200 משאיות וכלי רכב שונים וכ-1,000 איש. התנועה לנקודות עברה בשלום והשיירות לא התגלו (במקרה של חצרים, המשאיות הגיעו מבארות יצחק שבצפון והאנשים הגיעו במסע רגלי מבית אשל שבמזרח וזאת, כדי למנוע גילוי המשאיות על ידי תושבי באר שבע הערבית שלידה עבר מסלול ההגעה הרגלי). העבודה בנקודות עצמן נמשכה למעשה יומיים עד השלמת כל המבנים והגדרות שתוכננו.</field>
+        <field name="dcSubject">השנים הראשונות</field>
+        <field name="dcSubject">נחביר</field>
+        <field name="storageLocation">קור' א1</field>
+        <field name="dcType">image</field>
+        <field name="dcFormat">jpg</field>
+        <field name="dcIsPartOf">האוסף המרכזי::ארגזים::מיכל 1</field>
+        <field name="importTime">2015-03-22T10:52:03Z</field>
+    </doc>
+    <doc>
+        <field name="id">3</field>
+        <field name="dcTitle">האוסף הפרטי שלי</field>
+        <field name="dcDate">1947-03-22T10:52:03Z</field>
+        <field name="dcDescription">האוסף מכיל כל מיני דברים שאספתי</field>
+        <field name="storageLocation">אוס' א1</field>
+        <field name="dcType">collection</field>
+        <field name="importTime">1969-03-22T10:52:03Z</field>
+    </doc>
+</add>

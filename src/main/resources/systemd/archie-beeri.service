@@ -1,0 +1,16 @@
+# /etc/systemd/system/archie-beeri.service
+# Systemd unit file for Archie background processing service
+
+[Unit]
+Description=Archie background processing service
+After=syslog.target network.target mariadb.service solr.service activemq.service
+
+[Service]
+Type=forking
+ExecStart=/opt/hilel14/archie/beeri/bin/jobs-consumer.sh
+PIDFile=/opt/hilel14/archie/beeri/bin/jobs-consumer.pid
+SuccessExitStatus=143
+User=archie
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+    <doc>
+        <field name="id">col-1</field>
+        <field name="dcTitle">ארכיון קדמה</field>
+        <field name="dcDescription">הארכיון הישן של קיבוץ קדמה שעבר לבארי ביחד עם החברים</field>
+        <field name="dcType">collection</field>
+    </doc>
+    <doc>
+        <field name="id">col-2</field>
+        <field name="dcTitle">מסמכים לדוגמא</field>
+        <field name="dcDescription">מסמכים של קבצים מסוגים שונים: טקסט, תמונה, אודיו ווידאו</field>
+        <field name="dcType">collection</field>
+    </doc>
+</add>
