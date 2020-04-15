@@ -1,6 +1,12 @@
 package org.hilel14.archie.beeri.core.migration;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -24,6 +30,25 @@ public class SchemaMigration {
 
     static final Logger LOGGER = LoggerFactory.getLogger(SchemaMigration.class);
     private final Set<String> collections = new HashSet<>();
+
+    public static void main(String[] args) {
+        if (args.length != 2) {
+            System.out.println("Mandatory arguments: source-collection target-collection");
+            System.exit(1);
+        }
+        SchemaMigration app = new SchemaMigration();
+        try {
+            app.copyDocuments(args[0], args[1]);
+            Set<String> collections = app.getCollections();
+            List<String> list = new ArrayList<>(collections);
+            Collections.sort(list);
+            Path outFile = Paths.get(System.getProperty("java.io.tmpdir")).resolve("collections.txt");
+            Files.write(outFile, list);
+            LOGGER.info("The operation completed successfully. {} general collections found. Report saved in {}", collections.size(), outFile);
+        } catch (Exception ex) {
+            LOGGER.error(null, ex);
+        }
+    }
 
     public void copyDocuments(String source, String target) throws Exception {
         try (
