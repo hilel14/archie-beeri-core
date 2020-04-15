@@ -1,6 +1,9 @@
 package org.hilel14.archie.beeri.core.jobs.tools;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,6 +27,26 @@ public class DcCollectionsTool {
     public final static String SEPARATOR = " >> ";
     public final static DateFormat ISO8601_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     final Config config;
+
+    public static void main(String[] args) {
+        if (args.length != 1) {
+            System.out.println("mandatory argument: text input file with list of collections to create");
+            return;
+        }
+        Path inFile = Paths.get(args[0]);
+        LOGGER.info("Creating collections from file {}", inFile);
+        try {
+            Config config = new Config();
+            DcCollectionsTool tool = new DcCollectionsTool(config);
+            List<String> lines = Files.readAllLines(inFile);
+            for (String expression : lines) {
+                tool.autoCreateCollections(expression);
+            }
+            LOGGER.info("{} collections created", lines.size());
+        } catch (Exception ex) {
+            LOGGER.error(null, ex);
+        }
+    }
 
     public DcCollectionsTool(Config config) {
         this.config = config;
