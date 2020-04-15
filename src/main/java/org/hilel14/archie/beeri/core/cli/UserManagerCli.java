@@ -11,8 +11,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.hilel14.archie.beeri.core.Config;
 import org.hilel14.archie.beeri.core.users.User;
-import org.hilel14.archie.beeri.core.users.User;
-import org.hilel14.archie.beeri.core.users.UserManager;
 import org.hilel14.archie.beeri.core.users.UserManager;
 
 /**

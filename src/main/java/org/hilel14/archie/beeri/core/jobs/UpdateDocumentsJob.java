@@ -3,7 +3,6 @@ package org.hilel14.archie.beeri.core.jobs;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -14,7 +13,6 @@ import java.util.UUID;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.FileNotFoundException;
 import java.io.Reader;
@@ -41,21 +39,6 @@ public class UpdateDocumentsJob {
     final Config config;
     final DateFormat iso8601TimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     final String[] previewFileNameExtentions = new String[]{"png", "txt"};
-
-    public static void main(String[] args) {
-        Path in = Paths.get(args[0]);
-        try {
-            Config config = new Config();
-            String attributes = new String(Files.readAllBytes(in));
-            List<ArchieDocument> docs
-                    = new ObjectMapper().readValue(attributes, new TypeReference<List<ArchieDocument>>() {
-                    });
-            UpdateDocumentsJob job = new UpdateDocumentsJob(config);
-            job.run(docs);
-        } catch (Exception ex) {
-            LOGGER.error(null, ex);
-        }
-    }
 
     public UpdateDocumentsJob(Config config) {
         this.config = config;
