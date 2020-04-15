@@ -54,7 +54,7 @@ public class UpdateDocumentsJobCli {
             }
         } catch (ParseException ex) {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("users-admin", options);
+            formatter.printHelp("update-documents", options);
             System.exit(1);
         } catch (Exception ex) {
             LOGGER.error(null, ex);
