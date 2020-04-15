@@ -15,16 +15,16 @@ public class About {
 
     public static void main(String[] args) {
         try {
-            new About().getMavenProperties();
-            new Config();
+            getMavenProperties();
+            Config config = new Config();
         } catch (IOException ex) {
             LOGGER.error("Config error", ex);
         }
     }
 
-    private void getMavenProperties() throws IOException {
+    private static void getMavenProperties() throws IOException {
         Properties props = new Properties();
-        String resourceName = "META-INF/maven/org.hilel14/archie-beeri-cli/pom.properties";
+        String resourceName = "META-INF/maven/org.hilel14/archie-beeri-core/pom.properties";
         InputStream inStream = About.class.getClassLoader().getResourceAsStream(resourceName);
         if (inStream == null) {
             LOGGER.warn("Unable to load {}", resourceName);
