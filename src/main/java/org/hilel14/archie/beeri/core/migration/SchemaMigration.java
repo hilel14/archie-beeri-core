@@ -34,6 +34,8 @@ public class SchemaMigration {
     public static void main(String[] args) {
         if (args.length != 2) {
             System.out.println("Mandatory arguments: source-collection target-collection");
+            System.out.println("Example: beeri_old archie_beeri");
+            System.out.println("");
             System.exit(1);
         }
         SchemaMigration app = new SchemaMigration();
@@ -50,10 +52,13 @@ public class SchemaMigration {
         }
     }
 
-    public void copyDocuments(String source, String target) throws Exception {
+    public void copyDocuments(String sourceCollection, String targetCollection) throws Exception {
+        String sourceUrl = "http://localhost:8983/solr/" + sourceCollection;
+        String targetUrl = "http://localhost:8983/solr/" + targetCollection;
+        LOGGER.info("Migrating from {} to {}", sourceUrl, targetUrl);
         try (
-                SolrClient sourceClient = new HttpSolrClient.Builder(source).build();
-                SolrClient targetClient = new HttpSolrClient.Builder(target).build();) {
+                SolrClient sourceClient = new HttpSolrClient.Builder(sourceUrl).build();
+                SolrClient targetClient = new HttpSolrClient.Builder(targetUrl).build();) {
             SolrDocument sourceDoc;
             SolrInputDocument targetDoc;
             SolrQuery query = new SolrQuery();

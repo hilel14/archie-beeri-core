@@ -120,6 +120,10 @@ public class ImportYomonimJob {
         String fileName = inFile.getFileName().toString().trim();
         Path outFile = importFolder.resolve(inFile.getFileName());
         LOGGER.debug("Moving attachment {} to import folder", inFile);
+        if (Files.exists(outFile)) {
+            LOGGER.warn("File already exist {}", outFile);
+            Files.delete(outFile);
+        }
         Files.move(inFile, outFile);
         LOGGER.debug("Analyzing file name {}", fileName);
         String[] parts = fileName.split("\\.");
@@ -141,6 +145,10 @@ public class ImportYomonimJob {
 
     private void importFile(Path path, String date, String issue) throws Exception {
         Path p = path.getParent().resolve(issue + ".pdf");
+        if (Files.exists(p)) {
+            LOGGER.warn("File already exist {}", p);
+            Files.delete(p);
+        }
         Files.move(path, p);
         ImportFolderForm form = new ImportFolderForm();
         form.setAddFileNamesTo("dcTitle");
