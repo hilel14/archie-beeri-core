@@ -40,7 +40,7 @@ public class DcCollectionsTool {
             DcCollectionsTool tool = new DcCollectionsTool(config);
             List<String> lines = Files.readAllLines(inFile);
             for (String expression : lines) {
-                tool.autoCreateCollections(expression);
+                tool.autoCreateCollections(expression.trim());
             }
             LOGGER.info("{} collections created", lines.size());
         } catch (Exception ex) {
