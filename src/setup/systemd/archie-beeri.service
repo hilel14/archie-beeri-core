@@ -8,7 +8,7 @@ After=syslog.target network.target mariadb.service solr.service activemq.service
 [Service]
 Type=forking
 ExecStart=/opt/hilel14/archie/beeri/bin/jobs-consumer.sh
-PIDFile=/opt/hilel14/archie/beeri/bin/jobs-consumer.pid
+PIDFile=/opt/hilel14/archie/beeri/temp/jobs-consumer.pid
 SuccessExitStatus=143
 User=archie
 

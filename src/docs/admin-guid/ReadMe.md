@@ -273,6 +273,15 @@ sudo chcon -R -t httpd_sys_content_t /var/www/archie/beeri
 
 Build and deploy Angular app
 
+Initial setup
+```bash
+#!/bin/bash
+yum localinstall nodesource-release-el7-1.noarch.rpm
+sudo npm install -g @angular/cli
+```
+
+Updates
+
 ```bash
 #!/bin/bash
 cd ~/archie-beeri/gui
