@@ -8,6 +8,18 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <scm>
+        <developerConnection>
+            scm:git:https://github.com/archie-beeri/core
+        </developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+    <distributionManagement>
+        <repository>
+            <id>my-work-station</id>
+            <url>file:///var/opt/maven/</url>
+        </repository>
+    </distributionManagement>    
     <build>
         <plugins>
             <plugin>
