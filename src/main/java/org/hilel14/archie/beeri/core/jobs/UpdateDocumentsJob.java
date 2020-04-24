@@ -5,25 +5,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.FileNotFoundException;
 import java.io.Reader;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.hilel14.archie.beeri.core.Config;
 import org.hilel14.archie.beeri.core.Config.AccessRights;
@@ -59,7 +53,7 @@ public class UpdateDocumentsJob {
         Iterable<CSVRecord> records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);
         for (CSVRecord record : records) {
             count++;
-            ArchieDocument doc = new ObjectMapper().convertValue(record.toMap(), ArchieDocument.class);
+            ArchieDocument doc = new ArchieDocument(record.toMap());
             update(doc, config.getSolrClient());
         }
         LOGGER.info("Commiting changes to {} documents", count);
@@ -87,10 +81,8 @@ public class UpdateDocumentsJob {
         // set access rights
         setField("dcAccessRights", archdoc.getDcAccessRights(), soldoc);
         if (archdoc.getDcFormat() != null) {
-            moveFiles(archdoc);
+            //moveFiles(archdoc);
         }
-        // Create dc collection hierarchy if not exists
-        createDcCollection(archdoc.getDcIsPartOf(), solrClient);
         // add to solr
         solrClient.add(soldoc);
     }
@@ -148,27 +140,6 @@ public class UpdateDocumentsJob {
             }
         }
         throw new FileNotFoundException("File " + doc.getId() + "." + doc.getDcFormat() + " not found in asset store.");
-    }
-
-    private void createDcCollection(String title, SolrClient solrClient) throws SolrServerException, IOException {
-        if (title != null) {
-            SolrQuery query = new SolrQuery();
-            query.set("q", "dcType:collection");
-            query.set("fq", "dcTitle:" + "\"" + title + "\"");
-            query.setFields("id");
-            QueryResponse response = solrClient.query(query);
-            SolrDocumentList list = response.getResults();
-            if (list.getNumFound() == 0) {
-                LOGGER.debug("Creating dc-collection document {}", title);
-                SolrInputDocument solrDoc = new SolrInputDocument();
-                solrDoc.addField("id", UUID.randomUUID().toString());
-                solrDoc.addField("importTime", iso8601TimeFormat.format(Calendar.getInstance().getTime()));
-                solrDoc.addField("dcType", "collection");
-                solrDoc.addField("dcTitle", title);
-                solrClient.add(solrDoc);
-                solrClient.commit();
-            }
-        }
     }
 
 }

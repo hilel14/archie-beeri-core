@@ -16,6 +16,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.hilel14.archie.beeri.core.Config;
 import org.hilel14.archie.beeri.core.jobs.UpdateDocumentsJob;
@@ -42,7 +43,8 @@ public class UpdateDocumentsJobCli {
             Config config = new Config();
             UpdateDocumentsJob job = new UpdateDocumentsJob(config);
             Path inFile = Paths.get(input);
-            switch (input) {
+            String format = FilenameUtils.getExtension(inFile.getFileName().toString());
+            switch (format) {
                 case "json":
                     processJson(job, inFile);
                     break;
@@ -83,7 +85,7 @@ public class UpdateDocumentsJobCli {
         Options options = new Options();
         Option option;
         // input
-        option = new Option("i", "Input. One of: json, csv.");
+        option = new Option("i", "Input. Path to json or csv input file.");
         option.setLongOpt("input");
         option.setArgs(1);
         option.setRequired(true);
