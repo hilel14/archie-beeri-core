@@ -1,0 +1,2 @@
+# run backup script every day at 1:00
+00 01 * * * /opt/hilel14/archie/beeri/bin/backup.sh
