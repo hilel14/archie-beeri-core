@@ -1,6 +1,11 @@
 #!/bin/sh
 
+# exit on first error
 set -e
+
+# Set env for cron
+export PATH=/opt/aws/cli/bin:$PATH
+export HOME=/home/centos
 
 # Solr
 curl http://localhost:8983/solr/archie_beeri/replication?command=backup
