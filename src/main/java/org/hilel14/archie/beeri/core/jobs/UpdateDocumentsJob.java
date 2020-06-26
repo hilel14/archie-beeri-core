@@ -1,8 +1,5 @@
 package org.hilel14.archie.beeri.core.jobs;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -11,16 +8,14 @@ import java.util.Map;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import java.io.FileNotFoundException;
 import java.io.Reader;
+import java.net.URI;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.hilel14.archie.beeri.core.Config;
-import org.hilel14.archie.beeri.core.Config.AccessRights;
 import org.hilel14.archie.beeri.core.jobs.model.ArchieDocument;
 
 /**
@@ -38,7 +33,7 @@ public class UpdateDocumentsJob {
         this.config = config;
     }
 
-    public void run(List<ArchieDocument> docs) throws SolrServerException, IOException {
+    public void run(List<ArchieDocument> docs) throws Exception {
         LOGGER.debug("Updating {} documents", docs.size());
         for (ArchieDocument archdoc : docs) {
             update(archdoc, config.getSolrClient());
@@ -47,7 +42,7 @@ public class UpdateDocumentsJob {
         LOGGER.debug("Update documents job completed successfully");
     }
 
-    public void runCsv(Reader in) throws IOException, SolrServerException {
+    public void runCsv(Reader in) throws Exception {
         LOGGER.info("Updating Solr index from CSV file...");
         int count = 0;
         Iterable<CSVRecord> records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);
@@ -62,7 +57,7 @@ public class UpdateDocumentsJob {
     }
 
     public void update(ArchieDocument archdoc, SolrClient solrClient)
-            throws SolrServerException, IOException {
+            throws Exception {
         // Create Solr Document
         SolrInputDocument soldoc = new SolrInputDocument();
         // Set the id field
@@ -81,7 +76,7 @@ public class UpdateDocumentsJob {
         // set access rights
         setField("dcAccessRights", archdoc.getDcAccessRights(), soldoc);
         if (archdoc.getDcFormat() != null) {
-            //moveFiles(archdoc);
+            moveFiles(archdoc);
         }
         // add to solr
         solrClient.add(soldoc);
@@ -98,48 +93,36 @@ public class UpdateDocumentsJob {
         }
     }
 
-    private void moveFiles(ArchieDocument doc) throws IOException {
-        Path source = findSourceFile(doc);
-        AccessRights targetAccess = AccessRights.valueOf(doc.getDcAccessRights().toUpperCase());
-        Path target
-                = config
-                        .getAssetFolder(targetAccess, Config.AssetContainer.ASSETS)
-                        .resolve(doc.getId() + "." + doc.getDcFormat());
-        LOGGER.debug("Moving {} to {}", source, target);
-        Files.move(source, target);
-        movePreviewFiles(source, target, doc.getId());
-    }
-
-    private void movePreviewFiles(Path assetSource, Path assetTarget, String id) throws IOException {
-        String sourceAccess = assetSource.getParent().getParent().getFileName().toString().toUpperCase();
-        String targetAccess = assetTarget.getParent().getParent().getFileName().toString().toUpperCase();
-        Path sourceFolder = config
-                .getAssetFolder(AccessRights.valueOf(sourceAccess), Config.AssetContainer.PREVIEW);
-        Path targetFolder = config
-                .getAssetFolder(AccessRights.valueOf(targetAccess), Config.AssetContainer.PREVIEW);
-        LOGGER.debug("Moving files from {} to {}", sourceFolder, targetFolder);
-        Path source;
-        Path target;
-        for (String ext : previewFileNameExtentions) {
-            source = sourceFolder.resolve(id + "." + ext);
-            LOGGER.debug("Checking if source path {} exists", source);
-            if (Files.exists(source)) {
-                target = targetFolder.resolve(id + "." + ext);
-                Files.move(source, target);
-            }
+    private void moveFiles(ArchieDocument doc) throws Exception {
+        URI original = URI.create("originals").resolve(doc.getId() + "." + doc.getDcFormat());
+        String sourceRepository = findSourceRepository(original);
+        if (sourceRepository.isEmpty()) {
+            return;
+        }
+        String targetRepository = doc.getDcAccessRights();
+        if (sourceRepository.equalsIgnoreCase(targetRepository)) {
+            return;
+        }
+        LOGGER.debug("Moving {} from {} to {}", original, sourceRepository, targetRepository);
+        config.getStorageConnector().move(sourceRepository, targetRepository, original);
+        // thumbnails
+        URI thumbnail = URI.create("thumbnails").resolve(doc.getId() + ".png");
+        if (config.getStorageConnector().exist(sourceRepository, thumbnail)) {
+            config.getStorageConnector().move(sourceRepository, targetRepository, thumbnail);
+        }
+        // text
+        URI text = URI.create("text").resolve(doc.getId() + ".txt");
+        if (config.getStorageConnector().exist(sourceRepository, text)) {
+            config.getStorageConnector().move(sourceRepository, targetRepository, text);
         }
     }
 
-    private Path findSourceFile(ArchieDocument doc) throws FileNotFoundException {
-        Path source;
-        for (AccessRights accessRights : AccessRights.values()) {
-            source = config.getAssetFolder(accessRights, Config.AssetContainer.ASSETS)
-                    .resolve(doc.getId() + "." + doc.getDcFormat());
-            if (Files.exists(source)) {
-                return source;
+    private String findSourceRepository(URI original) {
+        for (String repository : config.getRepositories()) {
+            if (config.getStorageConnector().exist(repository, original)) {
+                return repository;
             }
         }
-        throw new FileNotFoundException("File " + doc.getId() + "." + doc.getDcFormat() + " not found in asset store.");
+        return "";
     }
-
 }

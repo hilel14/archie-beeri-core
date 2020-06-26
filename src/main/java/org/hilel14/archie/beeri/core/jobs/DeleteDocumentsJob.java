@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.URI;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -18,8 +19,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.hilel14.archie.beeri.core.Config;
-import org.hilel14.archie.beeri.core.Config.AccessRights;
 import org.hilel14.archie.beeri.core.jobs.model.ArchieDocument;
+import org.hilel14.archie.beeri.core.storage.StorageConnector;
 
 /**
  *
@@ -50,7 +51,7 @@ public class DeleteDocumentsJob {
         this.config = config;
     }
 
-    public void run(List<String> ids) throws IOException, SolrServerException {
+    public void run(List<String> ids) throws Exception {
         LOGGER.debug("Deleting documents {}", ids);
         List<ArchieDocument> files = deleteDocuments(ids);
         LOGGER.debug("Deleting {} files", files.size());
@@ -98,23 +99,14 @@ public class DeleteDocumentsJob {
         return b.toString();
     }
 
-    private void deleteFiles(ArchieDocument doc) throws IOException {
-        AccessRights access = Config.AccessRights.valueOf(doc.getDcAccessRights().toUpperCase());
-        Path path
-                = config
-                        .getAssetFolder(access, Config.AssetContainer.ASSETS)
-                        .resolve(doc.getId() + "." + doc.getDcFormat());
-        Files.deleteIfExists(path);
-        path
-                = config
-                        .getAssetFolder(access, Config.AssetContainer.PREVIEW)
-                        .resolve(doc.getId() + ".png");
-        Files.deleteIfExists(path);
-        path
-                = config
-                        .getAssetFolder(access, Config.AssetContainer.PREVIEW)
-                        .resolve(doc.getId() + ".txt");
-        Files.deleteIfExists(path);
+    private void deleteFiles(ArchieDocument doc) throws Exception {
+        StorageConnector connector = config.getStorageConnector();
+        URI uri = URI.create("originals").resolve(doc.getId() + "." + doc.getDcFormat());
+        connector.delete(doc.getDcAccessRights(), uri);
+        uri = URI.create("thumnails").resolve(doc.getId() + ".png");
+        connector.delete(doc.getDcAccessRights(), uri);
+        uri = URI.create("text").resolve(doc.getId() + ".txt");
+        connector.delete(doc.getDcAccessRights(), uri);
     }
 
 }

@@ -26,12 +26,9 @@ public class PdfTool {
         this.config = config;
     }
 
-    public void extractTextFromPdf(ImportFileTicket ticket) throws IOException {
+    public void extractTextFromPdf(ImportFileTicket ticket, Path path) throws IOException {
         if (ticket.getFormat().equalsIgnoreCase("pdf")) {
             LOGGER.debug("Extracting text from PDF file {}", ticket.getFileName());
-            Path path = config.getImportFolder()
-                    .resolve(ticket.getImportFolderForm().getFolderName())
-                    .resolve(ticket.getFileName());
             try (PDDocument doc = PDDocument.load(path.toFile())) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 stripper.setSortByPosition(true);

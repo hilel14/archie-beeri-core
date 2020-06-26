@@ -7,14 +7,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.hilel14.archie.beeri.core.storage.AwsBucketConnector;
+import org.hilel14.archie.beeri.core.storage.SimpleStorageConnector;
+import org.hilel14.archie.beeri.core.storage.StorageConnector;
 
 /**
  *
@@ -24,9 +29,8 @@ public class Config {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
     private final String archieEnv;
-    private final Path importFolder;
-    private final Path assetStore;
-    private final Path mailFolder;
+    private StorageConnector storageConnector;
+    private Path workFolder;
     private final List<String> validFileFormats;
     private final List<String> validOcrFormats;
     private final String convertCommand;
@@ -37,27 +41,13 @@ public class Config {
     private BasicDataSource dataSource;
     private ActiveMQConnectionFactory jmsFactory;
     private final SolrClient solrClient;
-
-    public enum AccessRights {
-        PUBLIC,
-        PRIVATE,
-        SECRET
-    }
-
-    public static enum AssetContainer {
-        ASSETS,
-        PREVIEW
-    }
+    private final Set<String> repositories = new HashSet<>();
 
     public Config() throws IOException {
         Properties p = loadProperties();
         // general properties
         archieEnv = p.getProperty("archie.environment");
         LOGGER.info("archieEnv = {}", archieEnv);
-        // io properties
-        assetStore = Paths.get(p.getProperty("asset.store"));
-        importFolder = Paths.get(p.getProperty("import.folder"));
-        mailFolder = Paths.get(p.getProperty("mail.folder"));
         validFileFormats = Arrays.asList(p.getProperty("valid.file.formats").split(","));
         // jobs and tasks properties
         convertCommand = p.getProperty("imagemagic.convert");
@@ -72,13 +62,17 @@ public class Config {
         solrClient = new HttpSolrClient.Builder(p.getProperty("solr.base")).build();
         //jmsBrokerUrl = p.getProperty("archie.jms.broker");
         //jmsQueueName = p.getProperty("archie.jms.queue");
+        createStorageConnector(p);
+        repositories.add("public");
+        repositories.add("private");
+        repositories.add("secret");
     }
 
     private Properties loadProperties() throws IOException {
         Properties properties = new Properties();
         // First priority: get location of properties file from the environment
         String archieHome = System.getProperty("archie.home");
-        LOGGER.info("archieHome = {}", archieHome);        
+        LOGGER.info("archieHome = {}", archieHome);
         if (archieHome == null) {
             LOGGER.warn("System property archieHome not found");
         } else {
@@ -125,31 +119,18 @@ public class Config {
         LOGGER.info("Dastasource created for {}", props.getProperty("archie.jdbc.url"));
     }
 
-    public Path getAssetFolder(AccessRights access, AssetContainer container) {
-        return getAssetStore()
-                .resolve(access.toString().toLowerCase())
-                .resolve(container.toString().toLowerCase());
-    }
-
-    /**
-     * @return the importFolder
-     */
-    public Path getImportFolder() {
-        return importFolder;
-    }
-
-    /**
-     * @return the assetStore
-     */
-    public Path getAssetStore() {
-        return assetStore;
-    }
-
-    /**
-     * @return the mailFolder
-     */
-    public Path getMailFolder() {
-        return mailFolder;
+    private void createStorageConnector(Properties props) {
+        workFolder = Paths.get(props.getProperty("work.folder"));
+        switch (props.getProperty("storage.connector")) {
+            case "simple":
+                storageConnector = new SimpleStorageConnector();
+                break;
+            case "aws":
+                storageConnector = new AwsBucketConnector();
+                break;
+            default:
+                throw new IllegalArgumentException("unknown storage connector: " + props.getProperty("storage.connector"));
+        }
     }
 
     /**
@@ -227,6 +208,27 @@ public class Config {
      */
     public String getArchieEnv() {
         return archieEnv;
+    }
+
+    /**
+     * @return the storageConnector
+     */
+    public StorageConnector getStorageConnector() {
+        return storageConnector;
+    }
+
+    /**
+     * @return the workFolder
+     */
+    public Path getWorkFolder() {
+        return workFolder;
+    }
+
+    /**
+     * @return the repositories
+     */
+    public Set<String> getRepositories() {
+        return repositories;
     }
 
 }

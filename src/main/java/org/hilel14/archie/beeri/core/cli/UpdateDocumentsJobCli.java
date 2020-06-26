@@ -64,7 +64,7 @@ public class UpdateDocumentsJobCli {
     }
 
     static void processCsv(UpdateDocumentsJob job, Path inFile)
-            throws IOException, SolrServerException {
+            throws Exception {
         LOGGER.info("Updating Solr index from csv file {}", inFile);
         try (Reader in = new FileReader(inFile.toFile())) {
             job.runCsv(in);
@@ -72,7 +72,7 @@ public class UpdateDocumentsJobCli {
     }
 
     static void processJson(UpdateDocumentsJob job, Path inFile)
-            throws IOException, SolrServerException {
+            throws Exception {
         LOGGER.info("Updating Solr index from json file {}", inFile);
         String attributes = new String(Files.readAllBytes(inFile));
         List<ArchieDocument> docs

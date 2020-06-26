@@ -3,7 +3,7 @@ package org.hilel14.archie.beeri.core.jobs;
 import java.awt.Rectangle;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DateFormat;
@@ -21,6 +21,7 @@ import org.apache.commons.mail.util.MimeMessageParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripperByArea;
 import org.hilel14.archie.beeri.core.Config;
+import org.hilel14.archie.beeri.core.jobs.model.ImportFileTicket;
 import org.hilel14.archie.beeri.core.jobs.model.ImportFolderForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,12 +39,13 @@ public class ImportYomonimJob {
     final Pattern FILE_NAME_DATE_PATTERN = Pattern.compile("\\d{4}-\\d{1,2}-\\d{1,2}");
     final DateFormat FILE_NAME_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     final DateFormat ISO8601_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    Path inboxFolder;
+    //Path inboxFolder;
     Path attachmentsFolder;
     Path doneFolder;
     Path importFolder;
     PDFTextStripperByArea stripperByArea;
-    ImportFileJob importFileJob;
+    //ImportFileJob importFileJob;
+    ImportFolderJob importFolderJob;
 
     public static void main(String[] args) {
         try {
@@ -57,27 +59,28 @@ public class ImportYomonimJob {
 
     public ImportYomonimJob(Config config) throws IOException {
         this.config = config;
-        inboxFolder = config.getMailFolder().resolve("inbox");
-        attachmentsFolder = config.getMailFolder().resolve("attachments");
-        doneFolder = config.getMailFolder().resolve("done");
-        importFolder = config.getImportFolder().resolve("yomonim");
-        Files.createDirectories(importFolder);
+        Path mailFolder = config.getWorkFolder().resolve("mail");
+//        inboxFolder = mailFolder.resolve("inbox");
+        attachmentsFolder = mailFolder.resolve("attachments");
+        doneFolder = mailFolder.resolve("done");
+        importFolder = mailFolder.resolve("import");
         stripperByArea = new PDFTextStripperByArea();
         stripperByArea.addRegion("topRightCorner", new Rectangle(451, 20, 100, 100));
         stripperByArea.setSortByPosition(true);
-        importFileJob = new ImportFileJob(config);
+        //importFileJob = new ImportFileJob(config);
+        importFolderJob = new ImportFolderJob(config);
     }
 
     public void run() throws Exception {
-        LOGGER.info("{} files found in inbox", inboxFolder.toFile().list().length);
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(inboxFolder)) {
-            for (Path path : stream) {
-                extractAttachments(path);
-                Path done = doneFolder.resolve(path.getFileName());
-                Files.move(path, done);
-            }
-            LOGGER.info("The operation completed successfully");
+        List<String> items = config.getStorageConnector().list("mail", URI.create(""));
+        LOGGER.info("{} emails found in inbox", items.size());
+        for (String item : items) {
+            Path path = config.getStorageConnector().download("mail", URI.create(item));
+            extractAttachments(path);
+            Path done = doneFolder.resolve(path.getFileName());
+            Files.move(path, done);
         }
+        LOGGER.info("The operation completed successfully");
     }
 
     private void extractAttachments(Path inFile) throws Exception {
@@ -143,13 +146,13 @@ public class ImportYomonimJob {
         LOGGER.warn("Invalid file name {}", fileName);
     }
 
-    private void importFile(Path path, String date, String issue) throws Exception {
-        Path p = path.getParent().resolve(issue + ".pdf");
-        if (Files.exists(p)) {
-            LOGGER.warn("File already exist {}", p);
-            Files.delete(p);
+    private void importFile(Path source, String date, String issue) throws Exception {
+        Path target = source.getParent().resolve(issue + ".pdf");
+        if (Files.exists(target)) {
+            LOGGER.warn("File already exist {}", target);
+            Files.delete(target);
         }
-        Files.move(path, p);
+        Files.move(source, target);
         ImportFolderForm form = new ImportFolderForm();
         form.setAddFileNamesTo("dcTitle");
         form.setDcAccessRights("private");
@@ -159,7 +162,8 @@ public class ImportYomonimJob {
         form.setDcType("text");
         form.setFolderName("yomonim");
         form.setTextAction("extract");
-        importFileJob.importFile(form, p.getFileName().toString());
+        ImportFileTicket ticket = new ImportFileTicket(target.getFileName().toString(), form);
+        importFolderJob.importFile(ticket, target);
     }
 
     private void extractRegion(Path inFile)

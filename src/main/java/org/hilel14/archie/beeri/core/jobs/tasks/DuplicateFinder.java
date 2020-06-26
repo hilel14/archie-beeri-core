@@ -1,5 +1,6 @@
 package org.hilel14.archie.beeri.core.jobs.tasks;
 
+import java.nio.file.Path;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
@@ -23,7 +24,7 @@ public class DuplicateFinder implements TaskProcessor {
     }
 
     @Override
-    public void proccess(ImportFileTicket ticket) throws Exception {
+    public void proccess(ImportFileTicket ticket, Path path) throws Exception {
         LOGGER.debug("Checking if file {} already exist", ticket.getFileName());
         SolrQuery query = new SolrQuery();
         query.set("q", "fileDigest:" + ticket.getFileDigest());

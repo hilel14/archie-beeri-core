@@ -1,5 +1,6 @@
 package org.hilel14.archie.beeri.core.jobs.tasks;
 
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,7 +27,7 @@ public class DocumentCreator implements TaskProcessor {
     }
 
     @Override
-    public void proccess(ImportFileTicket ticket) throws Exception {
+    public void proccess(ImportFileTicket ticket, Path path) throws Exception {
         LOGGER.debug("Adding {} to Solr", ticket.getFileName());
         SolrInputDocument solrDoc = new SolrInputDocument();
         Map<String, Object> values = ticket.toDocument();

@@ -27,11 +27,8 @@ public class FileValidator implements TaskProcessor {
     }
 
     @Override
-    public void proccess(ImportFileTicket ticket) {
+    public void proccess(ImportFileTicket ticket, Path path) {
         LOGGER.debug("Validating file {}", ticket.getFileName());
-        Path path = config.getImportFolder()
-                .resolve(ticket.getImportFolderForm().getFolderName())
-                .resolve(ticket.getFileName());
         if (!Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
             ticket.setImportStatusCode(ImportFileTicket.INVALID_FILE);
             ticket.setImportStatusText("File not found");

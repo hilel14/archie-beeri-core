@@ -1,7 +1,7 @@
 package org.hilel14.archie.beeri.core.jobs;
 
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,6 +21,7 @@ import org.hilel14.archie.beeri.core.jobs.model.ImportFileTicket;
 import org.hilel14.archie.beeri.core.jobs.model.ImportFolderForm;
 import org.hilel14.archie.beeri.core.jobs.tasks.TaskProcessor;
 import org.hilel14.archie.beeri.core.jobs.tools.DatabaseTool;
+import org.hilel14.archie.beeri.core.storage.StorageConnector;
 
 /**
  *
@@ -63,35 +64,35 @@ public class ImportFolderJob {
 
     public void run(ImportFolderForm form) throws Exception {
         LOGGER.info("Importing folder {}", form.getFolderName());
-        List<String> items = getFolderItems(form.getFolderName());
+        URI uri = URI.create(form.getFolderName());
+        List<String> items = config.getStorageConnector().list("import", uri);
         LOGGER.debug("Folder {} contains {} items, textAction = {}, addFileNamesTo = {}",
                 form.getFolderName(), items.size(), form.getTextAction(), form.getAddFileNamesTo());
         databaseTool.createImportFolderRecord(form, items.size());
-        //DcCollectionsTool.autoCreateCollections(form.getDcIsPartOf());
+        StorageConnector connector = config.getStorageConnector();
         for (String item : items) {
+            // prepare
             ImportFileTicket ticket = new ImportFileTicket(item, form);
             databaseTool.createImportFileRecord(ticket);
-            for (TaskProcessor processor : processors) {
-                if (ticket.getImportStatusCode() == ImportFileTicket.IMPORT_IN_PROGRESS) {
-                    processor.proccess(ticket);
-                }
-            }
-            ticket.finalizeStatus();
+            // download
+            URI source = URI.create(
+                    ticket.getImportFolderForm().getFolderName())
+                    .resolve(ticket.getFileName());
+            Path path = connector.download("import", source);
+            // import
+            importFile(ticket, path);
             databaseTool.updateImportFileRecord(ticket);
         }
         LOGGER.info("Import job completed successfully for folder {}", form.getFolderName());
     }
 
-    private List<String> getFolderItems(String folderName) throws IOException {
-        List<String> items = new ArrayList<>();
-        try (DirectoryStream<Path> stream = Files
-                .newDirectoryStream(config.getImportFolder().resolve(folderName))) {
-            for (Path path : stream) {
-                items.add(path.getFileName().toString());
+    public void importFile(ImportFileTicket ticket, Path path) throws Exception {
+        for (TaskProcessor processor : processors) {
+            if (ticket.getImportStatusCode() == ImportFileTicket.IMPORT_IN_PROGRESS) {
+                processor.proccess(ticket, path);
             }
         }
-        return items;
-
+        ticket.finalizeStatus();
     }
 
 }

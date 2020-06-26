@@ -1,6 +1,7 @@
 package org.hilel14.archie.beeri.core.jobs.tasks;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import org.hilel14.archie.beeri.core.Config;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -27,13 +28,13 @@ public class ContentExtractor implements TaskProcessor {
     }
 
     @Override
-    public void proccess(ImportFileTicket ticket) throws Exception {
+    public void proccess(ImportFileTicket ticket, Path path) throws Exception {
         switch (ticket.getImportFolderForm().getTextAction()) {
             case "recognize":
-                ocrTool.recognizeTextWithOcr(ticket);
+                ocrTool.recognizeTextWithOcr(ticket, path);
                 break;
             case "extract":
-                pdfTool.extractTextFromPdf(ticket);
+                pdfTool.extractTextFromPdf(ticket, path);
                 break;
             default:
                 LOGGER.debug("Skipping text action for file {}", ticket.getFileName());

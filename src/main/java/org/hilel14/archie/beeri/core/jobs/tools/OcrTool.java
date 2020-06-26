@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.hilel14.archie.beeri.core.Config;
-import org.hilel14.archie.beeri.core.Config.AccessRights;
 import org.hilel14.archie.beeri.core.jobs.model.ImportFileTicket;
 
 /**
@@ -27,18 +26,9 @@ public class OcrTool {
         this.config = config;
     }
 
-    public void recognizeTextWithOcr(ImportFileTicket ticket) throws IOException {
+    public void recognizeTextWithOcr(ImportFileTicket ticket, Path source) throws IOException {
         LOGGER.debug("Using OCR to recognize text from file {}", ticket.getFileName());
-        // setup
-        Path source
-                = config.getImportFolder()
-                        .resolve(ticket.getImportFolderForm().getFolderName())
-                        .resolve(ticket.getFileName());
-        AccessRights access = Config.AccessRights.valueOf(ticket.getImportFolderForm().getDcAccessRights().toUpperCase());
-        String target
-                = config
-                        .getAssetFolder(access, Config.AssetContainer.PREVIEW)
-                        .resolve(ticket.getUuid()).toString();
+        String target = source.getParent().resolve(ticket.getUuid()).toString();
         // ocr
         if (config.getValidOcrFormats().contains(ticket.getFormat().toLowerCase())) {
             recognizeText(source.toString(), target);
@@ -52,8 +42,8 @@ public class OcrTool {
             return;
         }
         // process results
-        Path text = Paths.get(target + ".txt");
-        String content = new String(Files.readAllBytes(text), Charset.forName("utf-8"));
+        Path result = Paths.get(target + ".txt");
+        String content = new String(Files.readAllBytes(result), Charset.forName("utf-8"));
         if (!content.isEmpty()) {
             ticket.setContent(content);
         }

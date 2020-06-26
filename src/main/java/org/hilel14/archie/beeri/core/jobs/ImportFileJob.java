@@ -42,11 +42,14 @@ public class ImportFileJob {
 
     public void importFile(ImportFolderForm form, String fileName) throws Exception {
         ImportFileTicket ticket = new ImportFileTicket(fileName, form);
+        
+        /*
         for (TaskProcessor processor : processors) {
             if (ticket.getImportStatusCode() == ImportFileTicket.IMPORT_IN_PROGRESS) {
                 processor.proccess(ticket);
             }
         }
         ticket.finalizeStatus();
+         */
     }
 }
