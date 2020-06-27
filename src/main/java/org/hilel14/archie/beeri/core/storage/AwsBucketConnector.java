@@ -1,6 +1,5 @@
 package org.hilel14.archie.beeri.core.storage;
 
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,27 +38,27 @@ public class AwsBucketConnector implements StorageConnector {
     static final Logger LOGGER = LoggerFactory.getLogger(AwsBucketConnector.class);
 
     private S3Client s3;
-    private final Map<String, Path> repositories = new HashMap<>();
+    private final Map<String, String> repositories = new HashMap<>();
     private Path workFolder;
 
     @Override
     public void setup(Properties p) throws Exception {
         s3 = S3Client.create();
-        repositories.put("public", Paths.get(p.getProperty("public.assets")));
-        repositories.put("private", Paths.get(p.getProperty("private.assets")));
-        repositories.put("secret", Paths.get(p.getProperty("secret.assets")));
-        repositories.put("import", Paths.get(p.getProperty("import.folder")));
-        repositories.put("mail", Paths.get(p.getProperty("mail.folder")));
+        repositories.put("public", p.getProperty("public.assets"));
+        repositories.put("private", p.getProperty("private.assets"));
+        repositories.put("secret", p.getProperty("secret.assets"));
+        repositories.put("import", p.getProperty("import.folder"));
+        repositories.put("mail", p.getProperty("mail.folder"));
         workFolder = Paths.get(p.getProperty("work.folder"));
     }
 
     @Override
-    public List<String> list(String repository, URI target) throws Exception {
+    public List<String> list(String repository, String container) throws Exception {
         List<String> items = new ArrayList<>();
         ListObjectsRequest request = ListObjectsRequest
                 .builder()
                 .bucket(repository)
-                .prefix(target.toString())
+                .prefix(container)
                 .build();
         ListObjectsResponse response = s3.listObjects(request);
         List<S3Object> objects = response.contents();
@@ -71,10 +70,11 @@ public class AwsBucketConnector implements StorageConnector {
     }
 
     @Override
-    public void upload(Path source, String repository, URI target) throws Exception {
+    public void upload(Path source, String repository, String container) throws Exception {
+        String key = container.concat("/").concat(source.getFileName().toString());
         PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(repository)
-                .key(target.toString())
+                .key(key)
                 .build();
         PutObjectResponse response = s3.putObject(
                 request,
@@ -83,21 +83,23 @@ public class AwsBucketConnector implements StorageConnector {
     }
 
     @Override
-    public Path download(String repository, URI source) throws Exception {
-        Path target = workFolder.resolve(repository).resolve(source.toString());
+    public Path download(String repository, String container, String file) throws Exception {
+        String key = container.concat("/").concat(file);
+        Path target = workFolder.resolve(repository).resolve(container).resolve(file);
         Files.createDirectories(target.getParent());
         GetObjectRequest request = GetObjectRequest.builder()
                 .bucket(repository)
-                .key(target.toString())
+                .key(key)
                 .build();
         GetObjectResponse response = s3.getObject(request, target);
         return target;
     }
 
     @Override
-    public void delete(String repository, URI target) throws Exception {
+    public void delete(String repository, String container, String file) throws Exception {
+        String key = container.concat("/").concat(file);
         ArrayList<ObjectIdentifier> toDelete = new ArrayList<>();
-        toDelete.add(ObjectIdentifier.builder().key(target.toString()).build());
+        toDelete.add(ObjectIdentifier.builder().key(key).build());
         DeleteObjectsRequest request = DeleteObjectsRequest.builder()
                 .bucket(repository)
                 .delete(Delete.builder().objects(toDelete).build())
@@ -106,29 +108,31 @@ public class AwsBucketConnector implements StorageConnector {
     }
 
     @Override
-    public void move(String sourceRepository, String targetRepository, URI uri) throws Exception {
-        URI source = URI.create(sourceRepository).resolve(uri);
+    public void move(String sourceRepository, String targetRepository, String container, String file) throws Exception {
+        String source = repositories.get(sourceRepository).concat(container).concat(file);
+        String destination = repositories.get(targetRepository).concat(container).concat(file);
         CopyObjectRequest request = CopyObjectRequest.builder()
-                .copySource(source.toString())
+                .copySource(source)
                 .destinationBucket(targetRepository)
-                .destinationKey(uri.toString())
+                .destinationKey(destination)
                 .build();
         CopyObjectResponse response = s3.copyObject(request);
-        delete(sourceRepository, uri);
+        delete(sourceRepository, container, file);
     }
 
     @Override
-    public boolean exist(String repository, URI source) {
+    public boolean exist(String repository, String container, String file) {
+        String key = container.concat("/").concat(file);
         HeadObjectRequest request = HeadObjectRequest.builder()
                 .bucket(repository)
-                .key(source.toString())
+                .key(key)
                 .build();
         try {
             HeadObjectResponse response = s3.headObject(request);
-            LOGGER.debug("Object {} size {}", source, response.contentLength());
+            LOGGER.debug("Object {} size {}", key, response.contentLength());
             return true;
         } catch (NoSuchKeyException e) {
-            LOGGER.debug("NoSuchKey {}", source);
+            LOGGER.debug("NoSuchKey {}", key);
         }
         return false;
     }

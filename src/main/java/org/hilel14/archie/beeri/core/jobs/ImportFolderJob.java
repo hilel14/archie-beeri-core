@@ -2,6 +2,8 @@ package org.hilel14.archie.beeri.core.jobs;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -64,7 +66,8 @@ public class ImportFolderJob {
 
     public void run(ImportFolderForm form) throws Exception {
         LOGGER.info("Importing folder {}", form.getFolderName());
-        URI uri = URI.create(form.getFolderName());
+        String folder = URLEncoder.encode(form.getFolderName(), StandardCharsets.UTF_8.toString());
+        URI uri = URI.create(folder);
         List<String> items = config.getStorageConnector().list("import", uri);
         LOGGER.debug("Folder {} contains {} items, textAction = {}, addFileNamesTo = {}",
                 form.getFolderName(), items.size(), form.getTextAction(), form.getAddFileNamesTo());
@@ -74,10 +77,9 @@ public class ImportFolderJob {
             // prepare
             ImportFileTicket ticket = new ImportFileTicket(item, form);
             databaseTool.createImportFileRecord(ticket);
-            // download
-            URI source = URI.create(
-                    ticket.getImportFolderForm().getFolderName())
-                    .resolve(ticket.getFileName());
+            // download            
+            String file = URLEncoder.encode(ticket.getFileName(), StandardCharsets.UTF_8.toString());
+            URI source = URI.create(folder).resolve(file);
             Path path = connector.download("import", source);
             // import
             importFile(ticket, path);

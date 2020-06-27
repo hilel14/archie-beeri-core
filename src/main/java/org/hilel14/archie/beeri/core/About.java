@@ -17,7 +17,7 @@ public class About {
         try {
             getMavenProperties();
             Config config = new Config();
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             LOGGER.error("Config error", ex);
         }
     }

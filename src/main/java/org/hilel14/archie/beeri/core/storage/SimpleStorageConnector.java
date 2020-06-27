@@ -1,7 +1,6 @@
 package org.hilel14.archie.beeri.core.storage;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,42 +34,50 @@ public class SimpleStorageConnector implements StorageConnector {
     }
 
     @Override
-    public List<String> list(String repository, URI target) throws IOException {
+    public List<String> list(String repository, String container) throws IOException {
         List<String> items = new ArrayList<>();
-        Path dir = repositories.get(repository).resolve(target.toString());
+        Path dir = repositories.get(repository).resolve(container);
         DirectoryStream<Path> stream = Files.newDirectoryStream(dir);
         for (Path path : stream) {
-            items.add(path.toString());
+            items.add(path.getFileName().toString());
         }
         return items;
     }
 
     @Override
-    public void upload(Path source, String repository, URI target) throws IOException {
-        Files.copy(source, repositories.get(repository).resolve(target.toString()));
+    public void upload(Path source, String repository, String container) throws IOException {
+        Files.copy(source, repositories.get(repository).resolve(container).resolve(source.getFileName()));
     }
 
     @Override
-    public Path download(String repository, URI source) throws IOException {
-        return repositories.get(repository).resolve(source.toString());
+    public Path download(String repository, String container, String file) throws IOException {
+        return repositories.get(repository).resolve(container).resolve(file);
     }
 
     @Override
-    public void delete(String repository, URI target) throws IOException {
-        Files.deleteIfExists(repositories.get(repository).resolve(target.toString()));
+    public void delete(String repository, String container, String file) throws IOException {
+        Files.deleteIfExists(repositories.get(repository).resolve(container).resolve(file));
     }
 
     @Override
-    public void move(String sourceRepository, String targetRepository, URI uri) throws IOException {
-        Path source = repositories.get(sourceRepository).resolve(uri.toString());
-        Path target = repositories.get(targetRepository).resolve(uri.toString());
+    public void move(String sourceRepository, String targetRepository, String container, String file)
+            throws IOException {
+        Path source = repositories.get(sourceRepository).resolve(container).resolve(file);
+        Path target = repositories.get(targetRepository).resolve(container).resolve(file);
         Files.move(source, target);
     }
 
     @Override
-    public boolean exist(String repository, URI source) {
-        Path path = repositories.get(repository).resolve(source.toString());
+    public boolean exist(String repository, String container, String file) {
+        Path path = repositories.get(repository).resolve(container).resolve(file);
         return Files.exists(path);
+    }
+
+    /**
+     * @return the workFolder
+     */
+    public Path getWorkFolder() {
+        return workFolder;
     }
 
 }

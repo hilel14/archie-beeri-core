@@ -43,7 +43,7 @@ public class Config {
     private final SolrClient solrClient;
     private final Set<String> repositories = new HashSet<>();
 
-    public Config() throws IOException {
+    public Config() throws Exception {
         Properties p = loadProperties();
         // general properties
         archieEnv = p.getProperty("archie.environment");
@@ -119,14 +119,18 @@ public class Config {
         LOGGER.info("Dastasource created for {}", props.getProperty("archie.jdbc.url"));
     }
 
-    private void createStorageConnector(Properties props) {
+    private void createStorageConnector(Properties props) throws Exception {
         workFolder = Paths.get(props.getProperty("work.folder"));
         switch (props.getProperty("storage.connector")) {
             case "simple":
+                LOGGER.info("Creating simple storage connector");
                 storageConnector = new SimpleStorageConnector();
+                storageConnector.setup(props);
                 break;
             case "aws":
+                LOGGER.info("Creating AWS bucket storage connector");
                 storageConnector = new AwsBucketConnector();
+                storageConnector.setup(props);
                 break;
             default:
                 throw new IllegalArgumentException("unknown storage connector: " + props.getProperty("storage.connector"));
@@ -218,17 +222,17 @@ public class Config {
     }
 
     /**
-     * @return the workFolder
-     */
-    public Path getWorkFolder() {
-        return workFolder;
-    }
-
-    /**
      * @return the repositories
      */
     public Set<String> getRepositories() {
         return repositories;
+    }
+
+    /**
+     * @return the workFolder
+     */
+    public Path getWorkFolder() {
+        return workFolder;
     }
 
 }
