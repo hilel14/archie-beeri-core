@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
 import java.io.Reader;
-import java.net.URI;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
@@ -94,8 +93,7 @@ public class UpdateDocumentsJob {
     }
 
     private void moveFiles(ArchieDocument doc) throws Exception {
-        URI original = URI.create("originals").resolve(doc.getId() + "." + doc.getDcFormat());
-        String sourceRepository = findSourceRepository(original);
+        String sourceRepository = findSourceRepository("originals", doc.originalFileName());
         if (sourceRepository.isEmpty()) {
             return;
         }
@@ -103,23 +101,21 @@ public class UpdateDocumentsJob {
         if (sourceRepository.equalsIgnoreCase(targetRepository)) {
             return;
         }
-        LOGGER.debug("Moving {} from {} to {}", original, sourceRepository, targetRepository);
-        config.getStorageConnector().move(sourceRepository, targetRepository, original);
+        LOGGER.debug("Moving originals/{} from {} to {}", doc.originalFileName(), sourceRepository, targetRepository);
+        config.getStorageConnector().move(sourceRepository, targetRepository, "originals", doc.originalFileName());
         // thumbnails
-        URI thumbnail = URI.create("thumbnails").resolve(doc.getId() + ".png");
-        if (config.getStorageConnector().exist(sourceRepository, thumbnail)) {
-            config.getStorageConnector().move(sourceRepository, targetRepository, thumbnail);
+        if (config.getStorageConnector().exist(sourceRepository, "thumbnails", doc.thumbnailFileName())) {
+            config.getStorageConnector().move(sourceRepository, targetRepository, "thumbnails", doc.thumbnailFileName());
         }
         // text
-        URI text = URI.create("text").resolve(doc.getId() + ".txt");
-        if (config.getStorageConnector().exist(sourceRepository, text)) {
-            config.getStorageConnector().move(sourceRepository, targetRepository, text);
+        if (config.getStorageConnector().exist(sourceRepository, "text", doc.textFileName())) {
+            config.getStorageConnector().move(sourceRepository, targetRepository, "text", doc.textFileName());
         }
     }
 
-    private String findSourceRepository(URI original) {
+    private String findSourceRepository(String container, String file) {
         for (String repository : config.getRepositories()) {
-            if (config.getStorageConnector().exist(repository, original)) {
+            if (config.getStorageConnector().exist(repository, container, file)) {
                 return repository;
             }
         }

@@ -244,4 +244,17 @@ public class ArchieDocument {
     public void setDcAccessRights(String dcAccessRights) {
         this.dcAccessRights = dcAccessRights;
     }
+
+    public String originalFileName() {
+        return dcFormat != null ? id.concat(".").concat(dcFormat) : null;
+    }
+
+    public String thumbnailFileName() {
+        return dcFormat != null ? id.concat(".png") : null;
+    }
+
+    public String textFileName() {
+        return dcFormat != null ? id.concat(".txt") : null;
+    }
+
 }

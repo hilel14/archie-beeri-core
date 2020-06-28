@@ -46,12 +46,18 @@ public class SimpleStorageConnector implements StorageConnector {
 
     @Override
     public void upload(Path source, String repository, String container) throws IOException {
-        Files.copy(source, repositories.get(repository).resolve(container).resolve(source.getFileName()));
+        Path target = repositories.get(repository).resolve(container).resolve(source.getFileName());
+        Files.copy(source, target);
+        target.toFile().setReadable(true, false);
     }
 
     @Override
     public Path download(String repository, String container, String file) throws IOException {
-        return repositories.get(repository).resolve(container).resolve(file);
+        Path source = repositories.get(repository).resolve(container).resolve(file);
+        Path target = workFolder.resolve(repository).resolve(file);
+        //Files.createDirectories(target.getParent());
+        Files.move(source, target);
+        return target;
     }
 
     @Override

@@ -54,11 +54,12 @@ public class AwsBucketConnector implements StorageConnector {
 
     @Override
     public List<String> list(String repository, String container) throws Exception {
+        String prefix = container.concat("/");
         List<String> items = new ArrayList<>();
         ListObjectsRequest request = ListObjectsRequest
                 .builder()
                 .bucket(repository)
-                .prefix(container)
+                .prefix(prefix)
                 .build();
         ListObjectsResponse response = s3.listObjects(request);
         List<S3Object> objects = response.contents();
@@ -109,8 +110,8 @@ public class AwsBucketConnector implements StorageConnector {
 
     @Override
     public void move(String sourceRepository, String targetRepository, String container, String file) throws Exception {
-        String source = repositories.get(sourceRepository).concat(container).concat(file);
-        String destination = repositories.get(targetRepository).concat(container).concat(file);
+        String source = repositories.get(sourceRepository).concat("/").concat(container).concat("/").concat(file);
+        String destination = repositories.get(targetRepository).concat("/").concat(container).concat("/").concat(file);
         CopyObjectRequest request = CopyObjectRequest.builder()
                 .copySource(source)
                 .destinationBucket(targetRepository)

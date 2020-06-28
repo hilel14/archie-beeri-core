@@ -1,9 +1,6 @@
 package org.hilel14.archie.beeri.core.jobs;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,7 +20,6 @@ import org.hilel14.archie.beeri.core.jobs.model.ImportFileTicket;
 import org.hilel14.archie.beeri.core.jobs.model.ImportFolderForm;
 import org.hilel14.archie.beeri.core.jobs.tasks.TaskProcessor;
 import org.hilel14.archie.beeri.core.jobs.tools.DatabaseTool;
-import org.hilel14.archie.beeri.core.storage.StorageConnector;
 
 /**
  *
@@ -66,23 +62,20 @@ public class ImportFolderJob {
 
     public void run(ImportFolderForm form) throws Exception {
         LOGGER.info("Importing folder {}", form.getFolderName());
-        String folder = URLEncoder.encode(form.getFolderName(), StandardCharsets.UTF_8.toString());
-        URI uri = URI.create(folder);
-        List<String> items = config.getStorageConnector().list("import", uri);
+        List<String> items = config.getStorageConnector().list("import", form.getFolderName());
         LOGGER.debug("Folder {} contains {} items, textAction = {}, addFileNamesTo = {}",
                 form.getFolderName(), items.size(), form.getTextAction(), form.getAddFileNamesTo());
         databaseTool.createImportFolderRecord(form, items.size());
-        StorageConnector connector = config.getStorageConnector();
         for (String item : items) {
             // prepare
             ImportFileTicket ticket = new ImportFileTicket(item, form);
             databaseTool.createImportFileRecord(ticket);
-            // download            
-            String file = URLEncoder.encode(ticket.getFileName(), StandardCharsets.UTF_8.toString());
-            URI source = URI.create(folder).resolve(file);
-            Path path = connector.download("import", source);
+            // download
+            Path source = config.getStorageConnector().download("import", form.getFolderName(), ticket.getFileName());
+            Path target = config.getWorkFolder().resolve("import").resolve(ticket.getUuid() + "." + ticket.getFormat());
+            Files.move(source, target);
             // import
-            importFile(ticket, path);
+            importFile(ticket, target);
             databaseTool.updateImportFileRecord(ticket);
         }
         LOGGER.info("Import job completed successfully for folder {}", form.getFolderName());

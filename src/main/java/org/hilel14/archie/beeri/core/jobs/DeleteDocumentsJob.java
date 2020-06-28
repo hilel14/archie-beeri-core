@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.net.URI;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -20,7 +19,6 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.hilel14.archie.beeri.core.Config;
 import org.hilel14.archie.beeri.core.jobs.model.ArchieDocument;
-import org.hilel14.archie.beeri.core.storage.StorageConnector;
 
 /**
  *
@@ -100,13 +98,9 @@ public class DeleteDocumentsJob {
     }
 
     private void deleteFiles(ArchieDocument doc) throws Exception {
-        StorageConnector connector = config.getStorageConnector();
-        URI uri = URI.create("originals").resolve(doc.getId() + "." + doc.getDcFormat());
-        connector.delete(doc.getDcAccessRights(), uri);
-        uri = URI.create("thumnails").resolve(doc.getId() + ".png");
-        connector.delete(doc.getDcAccessRights(), uri);
-        uri = URI.create("text").resolve(doc.getId() + ".txt");
-        connector.delete(doc.getDcAccessRights(), uri);
+        config.getStorageConnector().delete(doc.getDcAccessRights(), "originals", doc.originalFileName());
+        config.getStorageConnector().delete(doc.getDcAccessRights(), "thumbnails", doc.thumbnailFileName());
+        config.getStorageConnector().delete(doc.getDcAccessRights(), "text", doc.textFileName());
     }
 
 }

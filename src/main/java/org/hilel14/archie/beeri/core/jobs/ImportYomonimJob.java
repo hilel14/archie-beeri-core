@@ -3,7 +3,6 @@ package org.hilel14.archie.beeri.core.jobs;
 import java.awt.Rectangle;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DateFormat;
@@ -72,10 +71,10 @@ public class ImportYomonimJob {
     }
 
     public void run() throws Exception {
-        List<String> items = config.getStorageConnector().list("mail", URI.create(""));
+        List<String> items = config.getStorageConnector().list("mail", "");
         LOGGER.info("{} emails found in inbox", items.size());
         for (String item : items) {
-            Path path = config.getStorageConnector().download("mail", URI.create(item));
+            Path path = config.getStorageConnector().download("mail", "", item);
             extractAttachments(path);
             Path done = doneFolder.resolve(path.getFileName());
             Files.move(path, done);
