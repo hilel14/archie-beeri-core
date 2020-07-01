@@ -19,7 +19,9 @@ public interface StorageConnector {
 
     public void setup(Properties props) throws Exception;
 
-    public List<String> list(String repository, String container) throws Exception;
+    public List<String> listFolders(String repository, String container) throws Exception;
+    
+    public List<String> listFiles(String repository, String container) throws Exception;
 
     public void upload(Path source, String repository, String container) throws Exception;
 

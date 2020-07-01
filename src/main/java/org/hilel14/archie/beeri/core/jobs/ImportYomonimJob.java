@@ -71,7 +71,7 @@ public class ImportYomonimJob {
     }
 
     public void run() throws Exception {
-        List<String> items = config.getStorageConnector().list("mail", "");
+        List<String> items = config.getStorageConnector().listFiles("mail", "");
         LOGGER.info("{} emails found in inbox", items.size());
         for (String item : items) {
             Path path = config.getStorageConnector().download("mail", "", item);

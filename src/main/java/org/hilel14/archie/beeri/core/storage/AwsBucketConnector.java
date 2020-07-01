@@ -1,6 +1,5 @@
 package org.hilel14.archie.beeri.core.storage;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -53,28 +52,55 @@ public class AwsBucketConnector implements StorageConnector {
     }
 
     @Override
-    public List<String> list(String repository, String container) throws Exception {
-        String prefix = container.concat("/");
+    public List<String> listFolders(String repository, String container) throws Exception {
+        LOGGER.debug("listing folders in repository {} container {}", repositories.get(repository), container);
         List<String> items = new ArrayList<>();
         ListObjectsRequest request = ListObjectsRequest
                 .builder()
-                .bucket(repository)
-                .prefix(prefix)
+                .bucket(repositories.get(repository))
+                .prefix(container)
                 .build();
         ListObjectsResponse response = s3.listObjects(request);
         List<S3Object> objects = response.contents();
         for (ListIterator iterVals = objects.listIterator(); iterVals.hasNext();) {
             S3Object object = (S3Object) iterVals.next();
-            items.add(object.key());
+            LOGGER.debug("found {}", object.key());
+            if (object.key().endsWith("/")) {
+                LOGGER.debug("adding {}", object.key());
+                items.add(object.key().substring(0, object.key().length() - 1));
+            }
+        }
+        LOGGER.debug("items count {}", items.size());
+        return items;
+    }
+
+    @Override
+    public List<String> listFiles(String repository, String container) throws Exception {
+        LOGGER.debug("listing files in repository {} container {}", repositories.get(repository), container);
+        List<String> items = new ArrayList<>();
+        ListObjectsRequest request = ListObjectsRequest
+                .builder()
+                .bucket(repositories.get(repository))
+                .prefix(container)
+                .build();
+        ListObjectsResponse response = s3.listObjects(request);
+        List<S3Object> objects = response.contents();
+        for (ListIterator iterVals = objects.listIterator(); iterVals.hasNext();) {
+            S3Object object = (S3Object) iterVals.next();
+            if (!object.key().endsWith("/")) {
+                String prefix = container.concat("/");
+                items.add(object.key().replace(prefix, ""));
+            }
         }
         return items;
     }
 
     @Override
-    public void upload(Path source, String repository, String container) throws Exception {
+    public void upload(Path source, String repository,
+            String container) throws Exception {
         String key = container.concat("/").concat(source.getFileName().toString());
         PutObjectRequest request = PutObjectRequest.builder()
-                .bucket(repository)
+                .bucket(repositories.get(repository))
                 .key(key)
                 .build();
         PutObjectResponse response = s3.putObject(
@@ -84,12 +110,13 @@ public class AwsBucketConnector implements StorageConnector {
     }
 
     @Override
-    public Path download(String repository, String container, String file) throws Exception {
+    public Path download(String repository, String container,
+            String file) throws Exception {
         String key = container.concat("/").concat(file);
-        Path target = workFolder.resolve(repository).resolve(container).resolve(file);
-        Files.createDirectories(target.getParent());
+        Path target = workFolder.resolve(repository).resolve(file);
+        //Files.createDirectories(target.getParent());
         GetObjectRequest request = GetObjectRequest.builder()
-                .bucket(repository)
+                .bucket(repositories.get(repository))
                 .key(key)
                 .build();
         GetObjectResponse response = s3.getObject(request, target);
@@ -97,35 +124,44 @@ public class AwsBucketConnector implements StorageConnector {
     }
 
     @Override
-    public void delete(String repository, String container, String file) throws Exception {
+    public void delete(String repository, String container,
+            String file) throws Exception {
         String key = container.concat("/").concat(file);
         ArrayList<ObjectIdentifier> toDelete = new ArrayList<>();
         toDelete.add(ObjectIdentifier.builder().key(key).build());
         DeleteObjectsRequest request = DeleteObjectsRequest.builder()
-                .bucket(repository)
+                .bucket(repositories.get(repository))
                 .delete(Delete.builder().objects(toDelete).build())
                 .build();
         s3.deleteObjects(request);
     }
 
     @Override
-    public void move(String sourceRepository, String targetRepository, String container, String file) throws Exception {
+    public void move(String sourceRepository, String targetRepository,
+            String container, String file) throws Exception {
         String source = repositories.get(sourceRepository).concat("/").concat(container).concat("/").concat(file);
-        String destination = repositories.get(targetRepository).concat("/").concat(container).concat("/").concat(file);
+        String destinationKey = container.concat("/").concat(file);
+        LOGGER.debug("moving {} to bucket {} key {}",
+                source,
+                repositories.get(targetRepository),
+                destinationKey
+        );
         CopyObjectRequest request = CopyObjectRequest.builder()
                 .copySource(source)
-                .destinationBucket(targetRepository)
-                .destinationKey(destination)
+                .destinationBucket(repositories.get(targetRepository))
+                .destinationKey(destinationKey)
                 .build();
         CopyObjectResponse response = s3.copyObject(request);
         delete(sourceRepository, container, file);
     }
 
     @Override
-    public boolean exist(String repository, String container, String file) {
+    public boolean exist(String repository, String container,
+            String file
+    ) {
         String key = container.concat("/").concat(file);
         HeadObjectRequest request = HeadObjectRequest.builder()
-                .bucket(repository)
+                .bucket(repositories.get(repository))
                 .key(key)
                 .build();
         try {

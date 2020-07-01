@@ -34,12 +34,27 @@ public class SimpleStorageConnector implements StorageConnector {
     }
 
     @Override
-    public List<String> list(String repository, String container) throws IOException {
+    public List<String> listFolders(String repository, String container) throws IOException {
         List<String> items = new ArrayList<>();
         Path dir = repositories.get(repository).resolve(container);
         DirectoryStream<Path> stream = Files.newDirectoryStream(dir);
         for (Path path : stream) {
-            items.add(path.getFileName().toString());
+            if (Files.isDirectory(path)) {
+                items.add(path.getFileName().toString());
+            }
+        }
+        return items;
+    }
+
+    @Override
+    public List<String> listFiles(String repository, String container) throws IOException {
+        List<String> items = new ArrayList<>();
+        Path dir = repositories.get(repository).resolve(container);
+        DirectoryStream<Path> stream = Files.newDirectoryStream(dir);
+        for (Path path : stream) {
+            if (Files.isRegularFile(path)) {
+                items.add(path.getFileName().toString());
+            }
         }
         return items;
     }

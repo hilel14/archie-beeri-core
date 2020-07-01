@@ -30,6 +30,11 @@ public class FileInstaller implements TaskProcessor {
         config.getStorageConnector().upload(original, repository, "originals");
         Path thumbnail = generateThumbnail(ticket, original);
         config.getStorageConnector().upload(thumbnail, repository, "thumbnails");
+        config.getStorageConnector().delete(
+                "import",
+                ticket.getImportFolderForm().getFolderName(),
+                ticket.getFileName()
+        );
         Files.deleteIfExists(original);
         Files.deleteIfExists(thumbnail);
     }

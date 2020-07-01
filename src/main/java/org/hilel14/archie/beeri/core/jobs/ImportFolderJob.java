@@ -62,7 +62,7 @@ public class ImportFolderJob {
 
     public void run(ImportFolderForm form) throws Exception {
         LOGGER.info("Importing folder {}", form.getFolderName());
-        List<String> items = config.getStorageConnector().list("import", form.getFolderName());
+        List<String> items = config.getStorageConnector().listFiles("import", form.getFolderName());
         LOGGER.debug("Folder {} contains {} items, textAction = {}, addFileNamesTo = {}",
                 form.getFolderName(), items.size(), form.getTextAction(), form.getAddFileNamesTo());
         databaseTool.createImportFolderRecord(form, items.size());
