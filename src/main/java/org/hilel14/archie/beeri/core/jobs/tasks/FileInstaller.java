@@ -27,7 +27,9 @@ public class FileInstaller implements TaskProcessor {
     @Override
     public void proccess(ImportFileTicket ticket, Path original) throws Exception {
         String repository = ticket.getImportFolderForm().getDcAccessRights();
+        // original
         config.getStorageConnector().upload(original, repository, "originals");
+        // thumbnail
         Path thumbnail = generateThumbnail(ticket, original);
         config.getStorageConnector().upload(thumbnail, repository, "thumbnails");
         config.getStorageConnector().delete(
@@ -35,8 +37,15 @@ public class FileInstaller implements TaskProcessor {
                 ticket.getImportFolderForm().getFolderName(),
                 ticket.getFileName()
         );
+        // text
+        Path text = config.getWorkFolder().resolve("import").resolve(ticket.getUuid() + ".txt");
+        if (Files.exists(text)) {
+            config.getStorageConnector().upload(text, repository, "text");
+        }
+        // cleanup
         Files.deleteIfExists(original);
         Files.deleteIfExists(thumbnail);
+        Files.deleteIfExists(text);
     }
 
     private Path generateThumbnail(ImportFileTicket ticket, Path original) throws Exception {

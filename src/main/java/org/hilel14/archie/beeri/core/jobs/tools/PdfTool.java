@@ -3,7 +3,10 @@ package org.hilel14.archie.beeri.core.jobs.tools;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -37,6 +40,8 @@ public class PdfTool {
                 String result = writer.toString();
                 if (result != null) {
                     ticket.setContent(result.trim());
+                    Path target = config.getWorkFolder().resolve("import").resolve(ticket.getUuid() + ".txt");
+                    Files.writeString(target, result, Charset.forName("utf-8"), StandardOpenOption.CREATE_NEW);
                 }
             }
         } else {
