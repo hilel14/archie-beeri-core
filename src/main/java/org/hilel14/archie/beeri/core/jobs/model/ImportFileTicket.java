@@ -65,22 +65,24 @@ public class ImportFileTicket {
         doc.put("fileDigest", fileDigest);
         doc.put("dcFormat", getFormat());
         // dynamic values based on file name
-        switch (importFolderForm.getAddFileNamesTo()) {
-            case "dcTitle":
-                String dcTitle = doc.get("dcTitle") == null
-                        ? getBaseName()
-                        : doc.get("dcTitle").toString().trim() + " " + getBaseName();
-                doc.put("dcTitle", dcTitle);
-                break;
-            case "dcDescription":
-                String dcDescription = doc.get("dcDescription") == null
-                        ? getBaseName()
-                        : doc.get("dcDescription").toString().trim() + " " + getBaseName();
-                doc.put("dcDescription", dcDescription);
-                break;
-            case "sortCode":
-                doc.put("sortCode", Long.valueOf(getBaseName()));
-                break;
+        if (importFolderForm.getAddFileNamesTo() != null) {
+            switch (importFolderForm.getAddFileNamesTo()) {
+                case "dcTitle":
+                    String dcTitle = doc.get("dcTitle") == null
+                            ? getBaseName()
+                            : doc.get("dcTitle").toString().trim() + " " + getBaseName();
+                    doc.put("dcTitle", dcTitle);
+                    break;
+                case "dcDescription":
+                    String dcDescription = doc.get("dcDescription") == null
+                            ? getBaseName()
+                            : doc.get("dcDescription").toString().trim() + " " + getBaseName();
+                    doc.put("dcDescription", dcDescription);
+                    break;
+                case "sortCode":
+                    doc.put("sortCode", Long.valueOf(getBaseName()));
+                    break;
+            }
         }
         return doc;
     }

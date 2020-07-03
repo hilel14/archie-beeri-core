@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CommonPrefix;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.CopyObjectResponse;
 import software.amazon.awssdk.services.s3.model.Delete;
@@ -55,20 +56,17 @@ public class AwsBucketConnector implements StorageConnector {
     public List<String> listFolders(String repository, String container) throws Exception {
         LOGGER.debug("listing folders in repository {} container {}", repositories.get(repository), container);
         List<String> items = new ArrayList<>();
-        ListObjectsRequest request = ListObjectsRequest
-                .builder()
-                .bucket(repositories.get(repository))
-                .prefix(container)
-                .build();
+        ListObjectsRequest.Builder builder = ListObjectsRequest.builder();
+        builder = builder.bucket(repositories.get(repository))
+                .delimiter("/");
+        if (!container.isEmpty()) {
+            builder = builder.prefix(container);
+        }
+        ListObjectsRequest request = builder.build();
         ListObjectsResponse response = s3.listObjects(request);
-        List<S3Object> objects = response.contents();
-        for (ListIterator iterVals = objects.listIterator(); iterVals.hasNext();) {
-            S3Object object = (S3Object) iterVals.next();
-            LOGGER.debug("found {}", object.key());
-            if (object.key().endsWith("/")) {
-                LOGGER.debug("adding {}", object.key());
-                items.add(object.key().substring(0, object.key().length() - 1));
-            }
+        List<CommonPrefix> folders = response.commonPrefixes();
+        for (CommonPrefix folder : folders) {
+            items.add(folder.prefix().substring(0, folder.prefix().length() - 1));
         }
         LOGGER.debug("items count {}", items.size());
         return items;
@@ -112,7 +110,7 @@ public class AwsBucketConnector implements StorageConnector {
     @Override
     public Path download(String repository, String container,
             String file) throws Exception {
-        String key = container.concat("/").concat(file);
+        String key = container.isEmpty() ? file : container.concat("/").concat(file);
         Path target = workFolder.resolve(repository).resolve(file);
         //Files.createDirectories(target.getParent());
         GetObjectRequest request = GetObjectRequest.builder()

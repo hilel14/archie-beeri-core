@@ -146,22 +146,18 @@ public class ImportYomonimJob {
     }
 
     private void importFile(Path source, String date, String issue) throws Exception {
-        Path target = source.getParent().resolve(issue + ".pdf");
-        if (Files.exists(target)) {
-            LOGGER.warn("File already exist {}", target);
-            Files.delete(target);
-        }
-        Files.move(source, target);
         ImportFolderForm form = new ImportFolderForm();
-        form.setAddFileNamesTo("dcTitle");
         form.setDcAccessRights("private");
         form.setDcDate(date);
         form.setDcIsPartOf("עיתונות מקומית >> יומון בארי");
-        form.setDcTitle("יומון ");
+        form.setDcTitle("יומון ".concat(issue));
+        //form.setAddFileNamesTo("dcTitle");
         form.setDcType("text");
         form.setFolderName("yomonim");
         form.setTextAction("extract");
-        ImportFileTicket ticket = new ImportFileTicket(target.getFileName().toString(), form);
+        ImportFileTicket ticket = new ImportFileTicket(issue + ".pdf", form);
+        Path target = source.getParent().resolve(ticket.getUuid() + ".pdf");
+        Files.move(source, target);
         importFolderJob.importFile(ticket, target);
     }
 
