@@ -75,6 +75,7 @@ public class ImportYomonimJob {
         LOGGER.info("{} emails found in inbox", items.size());
         for (String item : items) {
             Path path = config.getStorageConnector().download("mail", "", item);
+            config.getStorageConnector().delete("mail", "", item);
             extractAttachments(path);
             Path done = doneFolder.resolve(path.getFileName());
             Files.move(path, done);
