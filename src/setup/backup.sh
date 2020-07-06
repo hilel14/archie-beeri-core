@@ -12,10 +12,9 @@ curl http://localhost:8983/solr/archie_beeri/replication?command=backup
 aws s3 sync --only-show-errors --storage-class DEEP_ARCHIVE /opt/apache/solr/server/solr/archie_beeri/data/ s3://archie-beeri-backup/solr
 
 # Asset store
-#aws s3 sync --only-show-errors --storage-class DEEP_ARCHIVE s3://archie-beeri-asset-store s3://archie-beeri-backup
-aws s3 sync --only-show-errors --storage-class DEEP_ARCHIVE s3://archie-beeri-private s3://archie-beeri-backup/private
-aws s3 sync --only-show-errors --storage-class DEEP_ARCHIVE s3://archie-beeri-pubilc s3://archie-beeri-backup/pubilc
-aws s3 sync --only-show-errors --storage-class DEEP_ARCHIVE s3://archie-beeri-secret s3://archie-beeri-backup/secret
+aws s3 sync --only-show-errors --storage-class DEEP_ARCHIVE s3://archie-beeri-private/originals s3://archie-beeri-backup/private/assets
+aws s3 sync --only-show-errors --storage-class DEEP_ARCHIVE s3://archie-beeri-public/originals  s3://archie-beeri-backup/public/assets
+aws s3 sync --only-show-errors --storage-class DEEP_ARCHIVE s3://archie-beeri-secret/originals  s3://archie-beeri-backup/secret/assets
 
 # Report done
 echo `date` >> /var/opt/archie/beeri/logs/backup.log 
