@@ -96,7 +96,8 @@ public class AwsBucketConnector implements StorageConnector {
     @Override
     public void upload(Path source, String repository,
             String container) throws Exception {
-        String key = container.concat("/").concat(source.getFileName().toString());
+        String file = source.getFileName().toString();
+        String key = container.isEmpty() ? file : container.concat("/").concat(file);
         PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(repositories.get(repository))
                 .key(key)
@@ -124,7 +125,7 @@ public class AwsBucketConnector implements StorageConnector {
     @Override
     public void delete(String repository, String container,
             String file) throws Exception {
-        String key = container.concat("/").concat(file);
+        String key = container.isEmpty() ? file : container.concat("/").concat(file);
         ArrayList<ObjectIdentifier> toDelete = new ArrayList<>();
         toDelete.add(ObjectIdentifier.builder().key(key).build());
         DeleteObjectsRequest request = DeleteObjectsRequest.builder()
@@ -137,27 +138,25 @@ public class AwsBucketConnector implements StorageConnector {
     @Override
     public void move(String sourceRepository, String targetRepository,
             String container, String file) throws Exception {
-        String source = repositories.get(sourceRepository).concat("/").concat(container).concat("/").concat(file);
-        String destinationKey = container.concat("/").concat(file);
+        String key = container.isEmpty() ? file : container.concat("/").concat(file);
+        String source = repositories.get(sourceRepository).concat("/").concat(key);
         LOGGER.debug("moving {} to bucket {} key {}",
                 source,
                 repositories.get(targetRepository),
-                destinationKey
+                key
         );
         CopyObjectRequest request = CopyObjectRequest.builder()
                 .copySource(source)
                 .destinationBucket(repositories.get(targetRepository))
-                .destinationKey(destinationKey)
+                .destinationKey(key)
                 .build();
         CopyObjectResponse response = s3.copyObject(request);
         delete(sourceRepository, container, file);
     }
 
     @Override
-    public boolean exist(String repository, String container,
-            String file
-    ) {
-        String key = container.concat("/").concat(file);
+    public boolean exist(String repository, String container, String file) {
+        String key = container.isEmpty() ? file : container.concat("/").concat(file);
         HeadObjectRequest request = HeadObjectRequest.builder()
                 .bucket(repositories.get(repository))
                 .key(key)
