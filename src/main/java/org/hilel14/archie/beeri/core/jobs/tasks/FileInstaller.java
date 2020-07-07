@@ -31,18 +31,21 @@ public class FileInstaller implements TaskProcessor {
         config.getStorageConnector().upload(original, repository, "originals");
         // thumbnail
         Path thumbnail = generateThumbnail(ticket, original);
-        config.getStorageConnector().upload(thumbnail, repository, "thumbnails");
-        config.getStorageConnector().delete(
-                "import",
-                ticket.getImportFolderForm().getFolderName(),
-                ticket.getFileName()
-        );
+        if (thumbnail != null) {
+            config.getStorageConnector().upload(thumbnail, repository, "thumbnails");
+        }
         // text
         Path text = config.getWorkFolder().resolve("import").resolve(ticket.getUuid() + ".txt");
         if (Files.exists(text)) {
             config.getStorageConnector().upload(text, repository, "text");
         }
         // cleanup
+        config.getStorageConnector().delete(
+                "import",
+                ticket.getImportFolderForm().getFolderName(),
+                ticket.getFileName()
+        );
+
         Files.deleteIfExists(original);
         Files.deleteIfExists(thumbnail);
         Files.deleteIfExists(text);
