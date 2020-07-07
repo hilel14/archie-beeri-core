@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
 import javax.jms.Connection;
+import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.Queue;
 import javax.jms.Session;
@@ -35,7 +36,7 @@ public class JobsConsumer {
             JobsConsumer jobsConsumer = new JobsConsumer(config);
             jobsConsumer.pollJobsQueue();
         } catch (Exception ex) {
-            LOGGER.error(null, ex);
+            LOGGER.error("jobs-consumer init error", ex);
         }
     }
 
@@ -43,7 +44,7 @@ public class JobsConsumer {
         this.config = config;
     }
 
-    public void pollJobsQueue() throws Exception {
+    public void pollJobsQueue() throws JMSException {
         LOGGER.info("Connecting to jms broker {}", config.getJmsFactory().getBrokerURL());
         Connection connection = config.getJmsFactory().createConnection();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -52,8 +53,12 @@ public class JobsConsumer {
         LOGGER.info("Consuming messages from queue {}", config.getJmsQueueName());
         connection.start();
         while (true) {
-            ActiveMQTextMessage message = (ActiveMQTextMessage) consumer.receive();
-            runJob(message.getStringProperty("archieJobName"), message.getText());
+            try {
+                ActiveMQTextMessage message = (ActiveMQTextMessage) consumer.receive();
+                runJob(message.getStringProperty("archieJobName"), message.getText());
+            } catch (Exception ex) {
+                LOGGER.error("error while processing an job", ex);
+            }
         }
     }
 
