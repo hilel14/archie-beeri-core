@@ -57,7 +57,7 @@ public class JobsConsumer {
                 ActiveMQTextMessage message = (ActiveMQTextMessage) consumer.receive();
                 runJob(message.getStringProperty("archieJobName"), message.getText());
             } catch (Exception ex) {
-                LOGGER.error("error while processing an job", ex);
+                LOGGER.error("error while processing a job", ex);
             }
         }
     }

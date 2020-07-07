@@ -33,11 +33,13 @@ public class FileInstaller implements TaskProcessor {
         Path thumbnail = generateThumbnail(ticket, original);
         if (thumbnail != null) {
             config.getStorageConnector().upload(thumbnail, repository, "thumbnails");
+            Files.deleteIfExists(thumbnail);
         }
         // text
         Path text = config.getWorkFolder().resolve("import").resolve(ticket.getUuid() + ".txt");
         if (Files.exists(text)) {
             config.getStorageConnector().upload(text, repository, "text");
+            Files.delete(text);
         }
         // cleanup
         config.getStorageConnector().delete(
@@ -47,8 +49,6 @@ public class FileInstaller implements TaskProcessor {
         );
 
         Files.deleteIfExists(original);
-        Files.deleteIfExists(thumbnail);
-        Files.deleteIfExists(text);
     }
 
     private Path generateThumbnail(ImportFileTicket ticket, Path original) throws Exception {
