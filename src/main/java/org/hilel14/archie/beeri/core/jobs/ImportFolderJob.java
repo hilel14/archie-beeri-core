@@ -88,6 +88,16 @@ public class ImportFolderJob {
             }
         }
         ticket.finalizeStatus();
+        cleanup(ticket);
+    }
+
+    private void cleanup(ImportFileTicket ticket) throws IOException {
+        Path path = config.getWorkFolder().resolve("import").resolve(ticket.getUuid() + "." + ticket.getFormat());
+        Files.deleteIfExists(path);
+        path = config.getWorkFolder().resolve("import").resolve(ticket.getUuid() + ".png");
+        Files.deleteIfExists(path);
+        path = config.getWorkFolder().resolve("import").resolve(ticket.getUuid() + ".txt");
+        Files.deleteIfExists(path);
     }
 
 }
