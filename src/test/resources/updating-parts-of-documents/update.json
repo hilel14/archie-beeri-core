@@ -3,6 +3,9 @@
         "id": "1",
         "dcTitle": {
             "set": "new title 4"
+        },
+        "storageLocation": {
+            "set": "מיכל 4 (קדמה)"
         }
     }
 ]
