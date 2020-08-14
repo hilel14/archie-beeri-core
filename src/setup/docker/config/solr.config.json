@@ -1,0 +1,16 @@
+{
+    "add-requesthandler": {
+        "name": "/search",
+        "class": "solr.SearchHandler",
+        "defaults": {
+            "echoParams": "explicit",
+            "wt": "json",
+            "indent": true,
+            "rows": 10,
+            "df": "_text_",
+            "hl": "on",
+            "hl.fl": "archieContent",
+            "q.op": "AND"
+        }
+    }
+}
