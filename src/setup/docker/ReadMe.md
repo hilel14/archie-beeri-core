@@ -16,6 +16,12 @@ sudo docker exec -it archie.beeri.2 /bin/bash
 * Edit /opt/apache/activemq/conf/jetty.xml > bean id="jettyPort" >  property name="host" : set value to 0.0.0.0
 * Edit /opt/apache/tomcat/conf/tomcat-users.xml > Add user to manager-gui role
 
+## Deploy
+* cd archie-beeri-org/core
+* mvn clean install
+* cd archie-beeri-org/ws
+* mvn clean install
+
 ## Test
 
 Docker published ports

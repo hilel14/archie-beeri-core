@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for d in assetstore import logs work; do
+for d in assetstore import logs work mail; do
     mkdir -p /var/opt/archie/beeri/$d
 done
 for d1 in public private secret; do
@@ -10,6 +10,10 @@ for d1 in public private secret; do
     done
 done
 
+chown -R apache /var/opt/archie/beeri/
+
 for d in bin config webapp; do
     mkdir -p /opt/hilel14/archie/beeri/$d
 done
+
+chown -R apache /opt/hilel14/archie/

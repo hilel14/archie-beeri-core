@@ -2,8 +2,8 @@
 # Exit on first error
 set -e
 # config components
-./config/folders.sh
 ./config/packages.sh
+./config/folders.sh
 ./config/mariadb.sh
 ./config/httpd.sh
 ./config/solr.sh
