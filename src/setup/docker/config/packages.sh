@@ -1,6 +1,6 @@
 #!/bin/sh
 # Install core packages
 yum -y install epel-release
-yum -y install java-1.8.0-openjdk-devel git maven lsof curl wget ImageMagick ghostscript tesseract-langpack-heb mariadb-server httpd
+yum -y install java-11-openjdk mariadb-server httpd ImageMagick ghostscript tesseract tesseract-langpack-heb lsof curl wget
 # Install optional packages
 yum -y install vim bash-completion iproute
