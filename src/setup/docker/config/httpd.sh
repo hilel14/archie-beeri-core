@@ -1,2 +1,2 @@
 #!/bin/sh
-cp ./config/httpd.archie.conf /etc/httpd/conf.d
+cp ./config/httpd.archie.conf /etc/httpd/conf.d/archie.conf

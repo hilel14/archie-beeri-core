@@ -35,3 +35,12 @@ HTTPd reverse Proxy
 * cd archie-beeri-org/ws
 * mvn clean install
 * sudo docker cp target/archie-beeri-ws.war archie.beeri.2:/opt/apache/tomcat/webapps/
+
+## Deploy Angular
+ng build --prod --base-href / --i18n-file src/locale/messages.he.xlf --i18n-format xlf --i18n-locale he
+sudo docker exec archie.beeri.2 rm -rf /var/www/archie/beeri
+sudo docker cp dist/archie-beeri-ui archie.beeri.2:/var/www/archie/beeri
+sudo docker exec archie.beeri.2 chown -R 0.0 /var/www/archie/
+
+## Angular Dev
+npm install -g @angular/cli

@@ -17,3 +17,6 @@ for d in bin config webapp; do
 done
 
 chown -R apache /opt/hilel14/archie/
+
+mkdir -p /var/www/archie/beeri
+chown -R apache /var/www/archie/
