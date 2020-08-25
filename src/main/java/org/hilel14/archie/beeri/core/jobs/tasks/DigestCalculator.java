@@ -1,6 +1,7 @@
 package org.hilel14.archie.beeri.core.jobs.tasks;
 
-import java.nio.file.Files;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Path;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -26,8 +27,10 @@ public class DigestCalculator implements TaskProcessor {
     @Override
     public void proccess(ImportFileTicket ticket, Path path) throws Exception {
         LOGGER.debug("Calculating digest for file {}", ticket.getFileName());
-        byte[] data = Files.readAllBytes(path);
-        ticket.setFileDigest(DigestUtils.md5Hex(data));
+        try (InputStream in = new FileInputStream(path.toFile())) {
+            String digest = DigestUtils.md5Hex(in);
+            ticket.setFileDigest(digest);
+        }
     }
 
 }
