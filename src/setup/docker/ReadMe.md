@@ -22,6 +22,7 @@ sudo docker exec -it archie.beeri.2 /bin/bash
 * Set Java 11 as default: `update-alternatives --config java`
 * Set utf-8 as default locale: `export LC_ALL=en_US.UTF-8`
 * Create admin user: `/opt/hilel14/archie/beeri/bin/users-admin.sh`
+* Add some collections: `/opt/hilel14/archie/beeri/bin/create-dc-collections.sh core/src/test/resources/collections.txt`
 
 ## Test
 

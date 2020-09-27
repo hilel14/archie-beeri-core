@@ -1,5 +1,6 @@
 package org.hilel14.archie.beeri.core.jobs;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.hilel14.archie.beeri.core.Config;
 import org.hilel14.archie.beeri.core.jobs.model.ArchieDocument;
@@ -55,6 +57,27 @@ public class UpdateDocumentsJob {
         LOGGER.info("The operation completed successfully");
     }
 
+    public void updateSingle(String id, Map<String, Object> map)
+            throws Exception {
+        SolrInputDocument doc = new SolrInputDocument();
+        doc.addField("id", id);
+        for (String key : map.keySet()) {
+            setField(key, map.get(key), doc);
+            LOGGER.debug("update {} {}", key, map.get(key));
+        }
+        config.getSolrClient().add(doc);
+        config.getSolrClient().commit();
+        if (map.containsKey("dcAccessRights")) {
+            if (map.get("dcFormat") != null) {
+                ArchieDocument archdoc = new ArchieDocument();
+                archdoc.setId(id);
+                archdoc.setDcAccessRights(map.get("dcAccessRights").toString());
+                archdoc.setDcFormat(map.get("dcFormat").toString());
+                moveFiles(archdoc);
+            }
+        }
+    }
+
     public void update(ArchieDocument archdoc, SolrClient solrClient)
             throws Exception {
         // Create Solr Document
@@ -72,6 +95,7 @@ public class UpdateDocumentsJob {
         setField("storageLocation", archdoc.getStorageLocation(), soldoc);
         setField("dcIsPartOf", archdoc.getDcIsPartOf(), soldoc);
         setField("sortCode", archdoc.getSortCode(), soldoc);
+        //setField("content", archdoc.getContent(), soldoc);
         // set access rights
         setField("dcAccessRights", archdoc.getDcAccessRights(), soldoc);
         if (archdoc.getDcFormat() != null) {
@@ -81,15 +105,14 @@ public class UpdateDocumentsJob {
         solrClient.add(soldoc);
     }
 
-    private void setField(String name, Object value, SolrInputDocument soldoc) {
-        if (value != null) {
-            if (value.getClass().equals(String.class)) {
-                value = value.toString().trim();
-            }
-            Map<String, Object> update = new HashMap<>();
-            update.put("set", value);
-            soldoc.addField(name, update);
+    private void setField(String name, Object value, SolrInputDocument doc) {
+        if (value == null) {
+            doc.setField(name, null);
+            return;
         }
+        Map<String, Object> update = new HashMap<>();
+        update.put("set", value);
+        doc.addField(name, update);
     }
 
     private void moveFiles(ArchieDocument doc) throws Exception {

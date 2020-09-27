@@ -33,11 +33,13 @@ function setup {
 }
 
 function update-core {
+    kill `cat /var/opt/archie/beeri/logs/jobs-consumer.pid`
     findHome
     cd $DEV_HOME/core
     mvn clean install -DskipTests
     rm /opt/hilel14/archie/beeri/lib/archie-beeri-core*.jar
     mv target/archie-beeri-core*.jar /opt/hilel14/archie/beeri/lib
+    /opt/hilel14/archie/beeri/bin/jobs-consumer.sh 
 }
 
 function update-ws {

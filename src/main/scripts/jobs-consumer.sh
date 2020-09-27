@@ -10,4 +10,4 @@ java \
 -cp $APP_HOME/resources:$APP_HOME/lib/* \
 org.hilel14.archie.beeri.core.cli.JobsConsumer &
 
-echo $! > /opt/hilel14/archie/beeri/temp/jobs-consumer.pid
+echo $! > /var/opt/archie/beeri/logs/jobs-consumer.pid
