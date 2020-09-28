@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS import_file_log;
 DROP TABLE IF EXISTS import_folder_log;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS guest_book;
 
 CREATE TABLE users  (
     id INT(11) NOT NULL AUTO_INCREMENT,
@@ -28,4 +29,14 @@ CREATE TABLE import_file_log  (
     warning_message VARCHAR(255) DEFAULT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (import_folder_id) REFERENCES import_folder_log(id)
+) CHARACTER SET utf8 COLLATE utf8_bin;
+
+CREATE TABLE guest_book  (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    doc_id CHAR(36) NOT NULL, -- Same as archie document id
+    contact VARCHAR(255) DEFAULT NULL,
+    remarks TEXT DEFAULT NULL,    
+    creation_time DATETIME,
+    status_code INT DEFAULT 0,
+    PRIMARY KEY (id)
 ) CHARACTER SET utf8 COLLATE utf8_bin;

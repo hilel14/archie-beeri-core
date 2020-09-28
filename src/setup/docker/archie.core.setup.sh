@@ -25,6 +25,7 @@ function setup {
     mv target/archie-beeri-core*.jar /opt/hilel14/archie/beeri/lib
     cp src/main/scripts/* /opt/hilel14/archie/beeri/bin
     cp src/main/resources/* /opt/hilel14/archie/beeri/resources
+    cp src/setup/docker/logback.xml /opt/hilel14/archie/beeri/resources
     chmod 755 /opt/hilel14/archie/beeri/bin/*
     # ws
     cd $DEV_HOME/ws

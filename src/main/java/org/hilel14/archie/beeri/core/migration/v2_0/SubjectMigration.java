@@ -1,4 +1,4 @@
-package org.hilel14.archie.beeri.core.migration;
+package org.hilel14.archie.beeri.core.migration.v2_0;
 
 import java.io.FileReader;
 import java.io.FileWriter;
