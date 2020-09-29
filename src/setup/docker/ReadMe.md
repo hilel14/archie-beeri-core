@@ -43,3 +43,4 @@ HTTPd reverse Proxy
 
 Change directory to root of Angular project
 ng serve --base-href=/gui/
+ng serve --host 0.0.0.0
