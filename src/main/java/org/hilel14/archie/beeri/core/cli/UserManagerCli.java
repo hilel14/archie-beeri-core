@@ -29,7 +29,7 @@ public class UserManagerCli {
             CommandLine cmd = parser.parse(options, args);
             String action = cmd.getOptionValue("action").trim();
             User user = createUser(cmd);
-            UserManager manager = new UserManager(config.getDataSource(), null);
+            UserManager manager = new UserManager(config, null);
             switch (action) {
                 case "create":
                     LOGGER.info("Creating user {}", user.getUsername());

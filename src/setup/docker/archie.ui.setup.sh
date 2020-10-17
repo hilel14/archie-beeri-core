@@ -13,6 +13,6 @@ function findHome {
 findHome
 cd $DEV_HOME/gui
 npm install
-ng build --prod --base-href / --i18n-file src/locale/messages.he.xlf --i18n-format xlf --i18n-locale he
+ng build --prod --base-href /
 rm -rf /var/www/archie/beeri/*
 mv dist/archie-beeri-ui/* /var/www/archie/beeri

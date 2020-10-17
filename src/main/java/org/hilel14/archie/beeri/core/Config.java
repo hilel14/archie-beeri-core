@@ -38,6 +38,7 @@ public class Config {
     private final String convertImageCommand;
     private final String convertPdfCommand;
     private final String jmsQueueName;
+    private final String googleClientId;
     private BasicDataSource dataSource;
     private ActiveMQConnectionFactory jmsFactory;
     private final SolrClient solrClient;
@@ -57,6 +58,8 @@ public class Config {
         convertPdfCommand = p.getProperty("convert.pdf.preview");
         // jms properties
         jmsQueueName = p.getProperty("archie.jms.queue");
+        // angularx-social-login properties
+        googleClientId = p.getProperty("google.client.id");
         createJdbcDataSource(p);
         createJmsConnectionFactory(p);
         solrClient = new HttpSolrClient.Builder(p.getProperty("solr.base")).build();
@@ -71,7 +74,7 @@ public class Config {
     private Properties loadProperties() throws IOException {
         Properties properties = new Properties();
         // First priority: get location of properties file from the environment
-        String archieHome = System.getProperty("archie.home");
+        String archieHome = System.getProperty("archieHome");
         LOGGER.info("archieHome = {}", archieHome);
         if (archieHome == null) {
             LOGGER.warn("System property archieHome not found");
@@ -233,6 +236,13 @@ public class Config {
      */
     public Path getWorkFolder() {
         return workFolder;
+    }
+
+    /**
+     * @return the googleClientId
+     */
+    public String getGoogleClientId() {
+        return googleClientId;
     }
 
 }
