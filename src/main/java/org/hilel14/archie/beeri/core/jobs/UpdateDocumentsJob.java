@@ -1,6 +1,5 @@
 package org.hilel14.archie.beeri.core.jobs;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -14,7 +13,6 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.hilel14.archie.beeri.core.Config;
 import org.hilel14.archie.beeri.core.jobs.model.ArchieDocument;
@@ -59,6 +57,10 @@ public class UpdateDocumentsJob {
 
     public void updateSingle(String id, Map<String, Object> map)
             throws Exception {
+        if (map.keySet().size() == 0) {
+            LOGGER.warn("update record is empty for document id {} ", id);
+            return;
+        }
         SolrInputDocument doc = new SolrInputDocument();
         doc.addField("id", id);
         for (String key : map.keySet()) {
