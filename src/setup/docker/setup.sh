@@ -36,6 +36,8 @@ function createFolders {
         done
     done
     mkdir /var/opt/archie/beeri/work/import
+    mkdir -P /var/opt/archie/beeri/work/mail/import
+    mkdir -P /var/opt/archie/beeri/work/mail/done
     mkdir /var/opt/maven
     # application folder
     for d in bin lib resources; do
@@ -105,3 +107,7 @@ installHttpd
 installSolr
 installActiveMq
 installTomcat
+
+# edit image-magic policy: 
+# /etc/ImageMagick-6/policy.xml
+# comment "disable ghostscript format types" lines

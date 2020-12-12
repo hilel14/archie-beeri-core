@@ -24,6 +24,18 @@ sudo docker exec -it archie.beeri.2 /bin/bash
 * Create admin user: `/opt/hilel14/archie/beeri/bin/users-admin.sh`
 * Add some collections: `/opt/hilel14/archie/beeri/bin/create-dc-collections.sh core/src/test/resources/collections.txt`
 
+## Docker production post-installation tasks
+
+On production, move HTTPd from docker container to the host?
+
+* Remove development related directives from HTTPd config file
+* Install TLS certificate
+* Run mysql_secure_installation
+* SET PASSWORD FOR 'archie'@'localhost' = PASSWORD('changeme');
+* Make sure relevent scripts are executable
+* Update archie.beeri.properties
+* Add appllication users
+
 ## Test
 
 Docker published ports. For direct access, replace localhost with internal ip, obtained with docker inspect (example: 172.17.0.2)
