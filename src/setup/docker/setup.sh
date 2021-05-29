@@ -36,8 +36,8 @@ function createFolders {
         done
     done
     mkdir /var/opt/archie/beeri/work/import
-    mkdir -P /var/opt/archie/beeri/work/mail/import
-    mkdir -P /var/opt/archie/beeri/work/mail/done
+    mkdir -p /var/opt/archie/beeri/work/mail/import
+    mkdir -p /var/opt/archie/beeri/work/mail/done
     mkdir /var/opt/maven
     # application folder
     for d in bin lib resources; do
@@ -69,8 +69,8 @@ function installHttpd {
 function installSolr {
     # extract
     mkdir -p /opt/apache
-    tar xf ./download/solr-7.7.2.tgz
-    mv solr-7.7.2 /opt/apache/solr
+    tar xf ./download/solr-7.7.3.tgz
+    mv solr-7.7.3 /opt/apache/solr
     chown -R archie /opt/apache/solr
     # create beeri collection
     runuser -u archie -- /opt/apache/solr/bin/solr start
@@ -83,8 +83,8 @@ function installSolr {
 function installActiveMq {
     # extract
     mkdir -p /opt/apache
-    tar xf download/apache-activemq-5.15.10-bin.tar.gz
-    mv apache-activemq-5.15.10 /opt/apache/activemq
+    tar xf download/apache-activemq-5.16.2-bin.tar.gz
+    mv apache-activemq-5.16.2 /opt/apache/activemq
     # Set permissions
     chown -R archie /opt/apache/activemq
 }
@@ -92,8 +92,8 @@ function installActiveMq {
 function installTomcat {
     # extract
     mkdir -p /opt/apache
-    tar xf ./download/apache-tomcat-8.5.53.tar.gz
-    mv apache-tomcat-8.5.53 /opt/apache/tomcat
+    tar xf ./download/apache-tomcat-8.5.66.tar.gz
+    mv apache-tomcat-8.5.66 /opt/apache/tomcat
     cp ./tomcat.setenv.sh /opt/apache/tomcat/bin/setenv.sh
     # Set permissions
     chown -R archie /opt/apache/tomcat

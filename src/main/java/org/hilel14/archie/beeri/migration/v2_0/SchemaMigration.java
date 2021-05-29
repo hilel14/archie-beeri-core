@@ -1,4 +1,4 @@
-package org.hilel14.archie.beeri.core.migration.v2_0;
+package org.hilel14.archie.beeri.migration.v2_0;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

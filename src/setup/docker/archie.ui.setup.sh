@@ -10,8 +10,8 @@ function findHome {
     #DEV_HOME=$(dirname $(dirname $(dirname $(dirname $(dirname $0)))))
 }
 
-findHome
-cd $DEV_HOME/gui
+#findHome
+#cd $DEV_HOME/gui
 npm install
 ng build --prod --base-href /
 rm -rf /var/www/archie/beeri/*
