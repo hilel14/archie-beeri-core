@@ -1,0 +1,18 @@
+{
+  "name": "archie",
+  "image": "local/archie.beeri:2",
+  "settings": {
+    "java.home": "/usr/lib/jvm/java-11"
+  },
+  "extensions": [
+    "vscjava.vscode-java-pack"
+  ],
+  "remoteUser": "root",
+  "forwardPorts": [
+    80,
+    8080,
+    8983,
+    8161,
+    4200
+  ]
+}

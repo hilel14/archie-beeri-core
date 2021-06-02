@@ -8,9 +8,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.csv.CSVFormat;
@@ -89,6 +91,8 @@ public class FixCreaors {
         query.addField("id");
         query.addField("dcCreator");
         query.addField("dcDescription");
+        query.setStart(0);
+        query.setRows(Integer.MAX_VALUE);
         QueryResponse response = config.getSolrClient().query(query);
         SolrDocumentList list = response.getResults();
         return list;
@@ -110,19 +114,24 @@ public class FixCreaors {
             String copyToDescription) {
         for (int i = 0; i < list.getNumFound(); i++) {
             SolrDocument doc = list.get(i);
-            Map<String, Object> map = new HashMap();
-            map.put("id", doc.get("id"));
-            if (deleteCreator.equals("כן")) {
-                map.put("dcCreator", null);
-            }
-            if (!copyToDescription.isBlank()) {
-                map.put("dcDescription", doc.get("dcCreator"));
-            }
-            if (!newCreator.isBlank()) {
-                map.put("dcCreator", newCreator);
+            List<Object> creators = Arrays.asList(doc.get("dcCreator"));
+            if (creators.size() == 1) {
+                Map<String, Object> map = new HashMap();
+                map.put("id", doc.get("id"));
+                if (deleteCreator.equals("כן")) {
+                    map.put("dcCreator", null);
+                }
+                if (!copyToDescription.isBlank()) {
+                    map.put("dcDescription", doc.get("dcCreator"));
+                }
+                if (!newCreator.isBlank()) {
+                    map.put("dcCreator", newCreator);
+                }
+                // updateJob.updateSingle(String id, Map<String, Object> map)
+                // set value to null to delete field.
+            } else {
+                LOGGER.warn("doc {} contains more then one creators {}", doc.get("id"), creators);
             }
         }
-        // updateJob.updateSingle(String id, Map<String, Object> map)
-        // set value to null to delete field.
     }
 }
