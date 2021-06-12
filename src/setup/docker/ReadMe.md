@@ -4,7 +4,7 @@ docker build --rm --tag local/archie.beeri:2 .
 
 ## Run
 
-docker run -idt --mount type=bind, source="$(pwd)", target=/home/archie/archie-soft --name=archie.beeri.2 -p 80:80 -p 8983:8983 -p 8161:8161 local/archie.beeri:2
+docker run -idt --mount type=bind,source="$(pwd)",target=/home/archie/beeri --name=archie.beeri.2 -p 80:80 -p 8983:8983 -p 8161:8161 local/archie.beeri:2
 -i, --interactive 
 -d, --detach 
 -t, --tty 
