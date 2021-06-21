@@ -75,7 +75,7 @@ public class FixCreaors {
                     SolrDocumentList list = findDocuments(existingCreator);
                     LOGGER.info("{} documents found for {} ", list.getNumFound(), existingCreator);
                     if (list.getNumFound() > 0) {
-                        processCreator(list, newCreator, deleteCreator, copyToDescription);
+                        processCreator(list, existingCreator, newCreator, deleteCreator, copyToDescription);
                     }
                 }
             }
@@ -110,27 +110,37 @@ public class FixCreaors {
         return text;
     }
 
-    private void processCreator(SolrDocumentList list, String newCreator, String deleteCreator,
+    private void processCreator(SolrDocumentList list, String existingCreator, String newCreator, String deleteCreator,
             String copyToDescription) {
         for (int i = 0; i < list.getNumFound(); i++) {
             SolrDocument doc = list.get(i);
-            List<Object> creators = Arrays.asList(doc.get("dcCreator"));
-            if (creators.size() == 1) {
+             List<Object> creators = (List<Object>) doc.get("dcCreator");
+            LOGGER.info("creators = {}", creators);
+            if (creators.contains(existingCreator)) {
                 Map<String, Object> map = new HashMap();
                 map.put("id", doc.get("id"));
                 if (deleteCreator.equals("כן")) {
-                    map.put("dcCreator", null);
+                    creators.remove(existingCreator);
                 }
                 if (!copyToDescription.isBlank()) {
-                    map.put("dcDescription", doc.get("dcCreator"));
+                    map.put("dcDescription", existingCreator);
                 }
                 if (!newCreator.isBlank()) {
-                    map.put("dcCreator", newCreator);
+                    creators.remove(existingCreator);
+                    String[] newCreators = newCreator.split(",");
+                    for (String s : newCreators) {
+                        creators.add(s.trim());
+                    }
                 }
+                if (creators.isEmpty()) {
+                    map.put("dcCreator", null);
+                } else {
+                    map.put("dcCreator", creators);
+                }
+                LOGGER.info("number of creators={} in {}", creators.size(), map);
                 // updateJob.updateSingle(String id, Map<String, Object> map)
-                // set value to null to delete field.
             } else {
-                LOGGER.warn("doc {} contains more then one creators {}", doc.get("id"), creators);
+                LOGGER.warn("creator {} not found in {}", existingCreator, doc.get("dcCreator"));
             }
         }
     }
