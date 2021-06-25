@@ -111,14 +111,14 @@ public class FixCreaors {
     }
 
     private void processCreator(SolrDocumentList list, String existingCreator, String newCreator, String deleteCreator,
-            String copyToDescription) {
+            String copyToDescription) throws Exception {
         for (int i = 0; i < list.getNumFound(); i++) {
             SolrDocument doc = list.get(i);
-             List<Object> creators = (List<Object>) doc.get("dcCreator");
+            List<Object> creators = (List<Object>) doc.get("dcCreator");
             LOGGER.info("creators = {}", creators);
             if (creators.contains(existingCreator)) {
-                Map<String, Object> map = new HashMap();
-                map.put("id", doc.get("id"));
+                Map<String, Object> map = new HashMap<>();
+                //map.put("id", doc.get("id"));
                 if (deleteCreator.equals("כן")) {
                     creators.remove(existingCreator);
                 }
@@ -138,7 +138,7 @@ public class FixCreaors {
                     map.put("dcCreator", creators);
                 }
                 LOGGER.info("number of creators={} in {}", creators.size(), map);
-                // updateJob.updateSingle(String id, Map<String, Object> map)
+                updateJob.updateSingle(doc.get("id").toString(), map);
             } else {
                 LOGGER.warn("creator {} not found in {}", existingCreator, doc.get("dcCreator"));
             }
