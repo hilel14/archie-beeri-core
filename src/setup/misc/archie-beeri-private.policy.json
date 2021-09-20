@@ -1,0 +1,42 @@
+{
+    "Version": "2012-10-17",
+    "Id": "Beeri only access",
+    "Statement": [
+        {
+            "Sid": "Beeri only access",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:*",
+            "Resource": [
+                "arn:aws:s3:::archie-beeri-private",
+                "arn:aws:s3:::archie-beeri-private/*"
+            ],
+            "Condition": {
+                "IpAddress": {
+                    "aws:SourceIp": [
+                        "212.199.159.189/32",
+                        "212.199.159.190/32",
+                        "62.128.42.106/32"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "Temp access",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:*",
+            "Resource": [
+                "arn:aws:s3:::archie-beeri-private",
+                "arn:aws:s3:::archie-beeri-private/*"
+            ],
+            "Condition": {
+                "IpAddress": {
+                    "aws:SourceIp": [
+                        "147.161.13.146/32"
+                    ]
+                }
+            }
+        }
+    ]
+}
