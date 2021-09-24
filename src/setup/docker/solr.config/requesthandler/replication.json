@@ -1,0 +1,7 @@
+{
+    "add-requesthandler": {
+        "name": "/replication",
+        "class": "solr.ReplicationHandler",
+        "maxNumberOfBackups": 30
+    }
+}

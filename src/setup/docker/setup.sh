@@ -76,8 +76,9 @@ function installSolr {
     runuser -u archie -- /opt/apache/solr/bin/solr start
     runuser -u archie -- /opt/apache/solr/bin/solr create -c archie_beeri
     curl http://localhost:8983/solr/archie_beeri/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
-    curl http://localhost:8983/solr/archie_beeri/config -H 'Content-type:application/json' -d @./solr.config.json
     curl http://localhost:8983/solr/archie_beeri/schema -H 'Content-type:application/json' -d @./solr.schema.json
+    curl http://localhost:8983/solr/archie_beeri/config -H 'Content-type:application/json' -d @./solr.config/requesthandler/search.json
+    curl http://localhost:8983/solr/archie_beeri/config -H 'Content-type:application/json' -d @./solr.config/requesthandler/replication.json
 }
 
 function installActiveMq {
