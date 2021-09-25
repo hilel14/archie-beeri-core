@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Run from src/setup/docker/ as archie user
+# Run from the same folder as solr.config (e.g: src/setup/docker/) as archie user
 
 /opt/apache/solr/bin/solr delete -c archie_beeri
 /opt/apache/solr/bin/solr create -c archie_beeri
