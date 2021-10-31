@@ -1,13 +1,13 @@
 package org.hilel14.archie.beeri.core.cli;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonEncoding;
@@ -24,8 +24,6 @@ public class PrepareUpdate {
 
     public static void main(String[] args) {
         Path inPath = Paths.get(args[0]);
-        inPath = Paths.get(
-                "/home/hilel/Projects/GitHub/archie/beeri/archie-beeri-core/src/test/resources/updating-parts-of-documents/data-1.csv");
         try {
             csvToJason(inPath);
         } catch (Exception ex) {
@@ -56,35 +54,58 @@ public class PrepareUpdate {
     private static void convertDoc(Map<String, String> map, JsonGenerator generator) throws Exception {
         LOGGER.info("Processing record {}", map.get("id"));
         generator.writeStartObject();
-        generator.writeStringField("id", map.get("id"));
-        setString(generator, "dcTitle", map.get("dcTitle"));
-        setString(generator, "dcDate", map.get("dcDate"));
-        setString(generator, "dcType", map.get("dcType"));
-        setString(generator, "dcFormat", map.get("dcFormat"));
-        setString(generator, "storageLocation", map.get("storageLocation"));
-        setString(generator, "dcIsPartOf", map.get("dcIsPartOf"));
-        setString(generator, "dcAccessRights", map.get("dcAccessRights"));
-        setArray(generator, "dcCreator", map.get("dcCreator"));
-        setArray(generator, "dcSubject", map.get("dcSubject"));
+        generator.writeStringField("id", map.get("id")); // TODO: validate id (not empty, regex?)
+        setString(generator, "dcTitle", map);
+        setString(generator, "dcDate", map);
+        setString(generator, "dcType", map);
+        setString(generator, "dcFormat", map);
+        setString(generator, "storageLocation", map);
+        setString(generator, "dcIsPartOf", map);
+        setString(generator, "dcAccessRights", map);
+        setArray(generator, "dcCreator", map);
+        setArray(generator, "dcSubject", map);
         generator.writeEndObject();
     }
 
-    private static void setString(JsonGenerator generator, String key, String val) throws IOException {
-        generator.writeFieldName(key);
-        generator.writeStartObject();
-        generator.writeStringField("set", val);
-        generator.writeEndObject();
+    private static void setString(JsonGenerator generator, String key, Map<String, String> record) throws IOException {
+        if (record.containsKey(key)) {
+            String text = record.get(key).trim();
+            generator.writeFieldName(key);
+            generator.writeStartObject();
+            generator.writeStringField("set", text.isEmpty() ? null : text);
+            generator.writeEndObject();
+        }
     }
 
-    private static void setArray(JsonGenerator generator, String key, String val) throws IOException {
-        generator.writeFieldName(key);
-        generator.writeStartObject();
-        generator.writeFieldName("set");
-        generator.writeStartArray();
-        for (String element : val.split(","))
-            generator.writeString(element);
-        generator.writeEndArray();
-        generator.writeEndObject();
+    private static void setArray(JsonGenerator generator, String key, Map<String, String> record) throws IOException {
+        if (record.containsKey(key)) {
+            List<String> list = processArray(record.get(key));
+            generator.writeFieldName(key);
+            generator.writeStartObject();
+            if (list.isEmpty()) {
+                generator.writeStringField("set", null);
+            } else {
+                generator.writeFieldName("set");
+                generator.writeStartArray();
+                for (String item : list) {
+                    generator.writeString(item);
+                }
+                generator.writeEndArray();
+            }
+            generator.writeEndObject();
+        }
     }
 
+    private static List<String> processArray(String text) {
+        List<String> list = new ArrayList<>();
+        String[] elements = text.trim().split(",");
+        if (elements.length > 0) {
+            for (String element : elements) {
+                if (!element.trim().isEmpty()) {
+                    list.add(element.trim());
+                }
+            }
+        }
+        return list;
+    }
 }

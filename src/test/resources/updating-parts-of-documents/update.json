@@ -1,11 +1,291 @@
-[
-    {
-        "id": "1",
-        "dcTitle": {
-            "set": "new title 4"
-        },
-        "storageLocation": {
-            "set": "מיכל 4 (קדמה)"
-        }
-    }
-]
+[ {
+  "id" : "b788131a-e98b-4cc5-8066-509f1e4ec165",
+  "dcTitle" : {
+    "set" : "סיפורי חיים 2017 - הספר"
+  },
+  "dcDate" : {
+    "set" : "2017-09-30T00:00:00Z"
+  },
+  "dcType" : {
+    "set" : "text"
+  },
+  "dcFormat" : {
+    "set" : "pdf"
+  },
+  "storageLocation" : {
+    "set" : "ארון 6 מדף 2"
+  },
+  "dcIsPartOf" : {
+    "set" : "כללי"
+  },
+  "dcAccessRights" : {
+    "set" : "private"
+  },
+  "dcCreator" : {
+    "set" : [ "חנה ברין", "מעינה הרשקוביץ", "ניבה שגב", "נעמה חדד", "חנה רענן" ]
+  },
+  "dcSubject" : {
+    "set" : [ "חברים" ]
+  }
+}, {
+  "id" : "6a183043-1bf4-4dd7-996d-b5d691a57c03",
+  "dcTitle" : {
+    "set" : "ימי קורונה - פורים ילדים 2020"
+  },
+  "dcDate" : {
+    "set" : "2020-03-09T22:00:00Z"
+  },
+  "dcType" : {
+    "set" : "image"
+  },
+  "dcFormat" : {
+    "set" : "jpeg"
+  },
+  "storageLocation" : {
+    "set" : null
+  },
+  "dcIsPartOf" : {
+    "set" : "כללי"
+  },
+  "dcAccessRights" : {
+    "set" : "private"
+  },
+  "dcCreator" : {
+    "set" : null
+  },
+  "dcSubject" : {
+    "set" : [ "חגים", "פורים" ]
+  }
+}, {
+  "id" : "1616c8f4-648a-4ce0-8119-3aa0e131d5d7",
+  "dcTitle" : {
+    "set" : "ימי קורונה - פורים ילדים 2020"
+  },
+  "dcDate" : {
+    "set" : "2020-03-09T22:00:00Z"
+  },
+  "dcType" : {
+    "set" : "image"
+  },
+  "dcFormat" : {
+    "set" : "jpeg"
+  },
+  "storageLocation" : {
+    "set" : null
+  },
+  "dcIsPartOf" : {
+    "set" : "כללי"
+  },
+  "dcAccessRights" : {
+    "set" : null
+  },
+  "dcCreator" : {
+    "set" : null
+  },
+  "dcSubject" : {
+    "set" : [ "חגים", "פורים" ]
+  }
+}, {
+  "id" : "06952fe9-c4a4-408f-97e1-bd79b0de9e56",
+  "dcTitle" : {
+    "set" : "ימי קורונה - פורים ילדים 2020"
+  },
+  "dcDate" : {
+    "set" : "2020-03-09T22:00:00Z"
+  },
+  "dcType" : {
+    "set" : "image"
+  },
+  "dcFormat" : {
+    "set" : "jpeg"
+  },
+  "storageLocation" : {
+    "set" : null
+  },
+  "dcIsPartOf" : {
+    "set" : "כללי"
+  },
+  "dcAccessRights" : {
+    "set" : "private"
+  },
+  "dcCreator" : {
+    "set" : null
+  },
+  "dcSubject" : {
+    "set" : [ "חגים", "פורים" ]
+  }
+}, {
+  "id" : "6565e2fb-a55d-4bc7-967b-32467b4c7447",
+  "dcTitle" : {
+    "set" : "ימי קורונה - פורים ילדים 2020"
+  },
+  "dcDate" : {
+    "set" : "2020-03-09T22:00:00Z"
+  },
+  "dcType" : {
+    "set" : "image"
+  },
+  "dcFormat" : {
+    "set" : "jpeg"
+  },
+  "storageLocation" : {
+    "set" : null
+  },
+  "dcIsPartOf" : {
+    "set" : "כללי"
+  },
+  "dcAccessRights" : {
+    "set" : "private"
+  },
+  "dcCreator" : {
+    "set" : [ "אבי", "רון" ]
+  },
+  "dcSubject" : {
+    "set" : [ "חגים", "פורים" ]
+  }
+}, {
+  "id" : "1145223b-e85e-4e79-9999-794de32791ba",
+  "dcTitle" : {
+    "set" : "ימי קורונה - פורים ילדים 2020"
+  },
+  "dcDate" : {
+    "set" : "2020-03-09T22:00:00Z"
+  },
+  "dcType" : {
+    "set" : "image"
+  },
+  "dcFormat" : {
+    "set" : "jpeg"
+  },
+  "storageLocation" : {
+    "set" : null
+  },
+  "dcIsPartOf" : {
+    "set" : "כללי"
+  },
+  "dcAccessRights" : {
+    "set" : "private"
+  },
+  "dcCreator" : {
+    "set" : null
+  },
+  "dcSubject" : {
+    "set" : [ "חגים", "פורים" ]
+  }
+}, {
+  "id" : "4a41e5fa-12ba-4e69-b2e9-7140a2e88a7d",
+  "dcTitle" : {
+    "set" : "ימי קורונה - פורים ילדים 2020"
+  },
+  "dcDate" : {
+    "set" : "2020-03-09T22:00:00Z"
+  },
+  "dcType" : {
+    "set" : "image"
+  },
+  "dcFormat" : {
+    "set" : "jpeg"
+  },
+  "storageLocation" : {
+    "set" : null
+  },
+  "dcIsPartOf" : {
+    "set" : "כללי"
+  },
+  "dcAccessRights" : {
+    "set" : "private"
+  },
+  "dcCreator" : {
+    "set" : [ "אברהם", "יצחק", "יעקוב" ]
+  },
+  "dcSubject" : {
+    "set" : [ "חגים", "פורים" ]
+  }
+}, {
+  "id" : "5c48cd0e-5283-4071-a56f-0aef95e0db38",
+  "dcTitle" : {
+    "set" : "ימי קורונה - פורים ילדים 2020"
+  },
+  "dcDate" : {
+    "set" : "2020-03-09T22:00:00Z"
+  },
+  "dcType" : {
+    "set" : "image"
+  },
+  "dcFormat" : {
+    "set" : "jpeg"
+  },
+  "storageLocation" : {
+    "set" : null
+  },
+  "dcIsPartOf" : {
+    "set" : null
+  },
+  "dcAccessRights" : {
+    "set" : "private"
+  },
+  "dcCreator" : {
+    "set" : null
+  },
+  "dcSubject" : {
+    "set" : [ "חגים", "פורים" ]
+  }
+}, {
+  "id" : "14a378a8-fe95-428d-85e6-398fecc15fb4",
+  "dcTitle" : {
+    "set" : "ימי קורונה - פורים ילדים 2020"
+  },
+  "dcDate" : {
+    "set" : "2020-03-09T22:00:00Z"
+  },
+  "dcType" : {
+    "set" : "image"
+  },
+  "dcFormat" : {
+    "set" : "jpeg"
+  },
+  "storageLocation" : {
+    "set" : null
+  },
+  "dcIsPartOf" : {
+    "set" : "כללי"
+  },
+  "dcAccessRights" : {
+    "set" : "private"
+  },
+  "dcCreator" : {
+    "set" : null
+  },
+  "dcSubject" : {
+    "set" : [ "חגים", "פורים" ]
+  }
+}, {
+  "id" : "ccf14446-7446-428b-9eea-cd0daa9f24d4",
+  "dcTitle" : {
+    "set" : "קורונה שמורונה"
+  },
+  "dcDate" : {
+    "set" : "2020-03-09T22:00:00Z"
+  },
+  "dcType" : {
+    "set" : "image"
+  },
+  "dcFormat" : {
+    "set" : "jpeg"
+  },
+  "storageLocation" : {
+    "set" : null
+  },
+  "dcIsPartOf" : {
+    "set" : "כללי"
+  },
+  "dcAccessRights" : {
+    "set" : "private"
+  },
+  "dcCreator" : {
+    "set" : null
+  },
+  "dcSubject" : {
+    "set" : [ "חגים", "פורים" ]
+  }
+} ]
