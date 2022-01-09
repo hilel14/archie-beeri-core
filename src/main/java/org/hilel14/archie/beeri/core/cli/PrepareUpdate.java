@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PrepareUpdate {
+
     static final Logger LOGGER = LoggerFactory.getLogger(PrepareUpdate.class);
 
     public static void main(String[] args) {
@@ -34,10 +35,10 @@ public class PrepareUpdate {
     private static void csvToJason(Path inPath) throws Exception {
         LOGGER.info("Converting CSV file {} to Json ", inPath);
         int count = 0;
+        JsonFactory factory = new JsonFactory();
         try (Reader in = new FileReader(inPath.toFile());
-                FileOutputStream out = new FileOutputStream(inPath.toString().concat(".json"));) {
-            JsonFactory factory = new JsonFactory();
-            JsonGenerator generator = factory.createGenerator(out, JsonEncoding.UTF8);
+                FileOutputStream out = new FileOutputStream(inPath.toString().concat(".json"));
+                JsonGenerator generator = factory.createGenerator(out, JsonEncoding.UTF8);) {
             generator.useDefaultPrettyPrinter();
             generator.writeStartArray();
             Iterable<CSVRecord> records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);
@@ -46,7 +47,6 @@ public class PrepareUpdate {
                 convertDoc(record.toMap(), generator);
             }
             generator.writeEndArray();
-            generator.close();
             LOGGER.info("The operation completed successfully. {} documents converted.", count);
         }
     }
