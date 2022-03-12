@@ -101,6 +101,7 @@ public class AwsBucketConnector implements StorageConnector {
         PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(repositories.get(repository))
                 .key(key)
+                .contentDisposition("attachment")
                 .build();
         PutObjectResponse response = s3.putObject(
                 request,
