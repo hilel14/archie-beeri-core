@@ -58,7 +58,7 @@ public class ImportFileTicket {
         doc.put("dcSubject", importFolderForm.getDcSubjects());
         doc.put("dcType", importFolderForm.getDcType());
         doc.put("dcIsPartOf", importFolderForm.getDcIsPartOf());
-        doc.put("storageLocation", importFolderForm.getStorageLocation());
+        doc.put("storageLocation2", importFolderForm.getstorageLocation2());
         doc.put("dcAccessRights", importFolderForm.getDcAccessRights());
         // values from file
         doc.put("content", content);

@@ -59,7 +59,7 @@ public class PrepareUpdate {
         setString(generator, "dcDate", map);
         setString(generator, "dcType", map);
         setString(generator, "dcFormat", map);
-        setString(generator, "storageLocation", map);
+        setString(generator, "storageLocation2", map);
         setString(generator, "dcIsPartOf", map);
         setString(generator, "dcAccessRights", map);
         setArray(generator, "dcCreator", map);

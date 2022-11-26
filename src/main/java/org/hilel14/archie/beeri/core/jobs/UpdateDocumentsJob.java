@@ -94,7 +94,7 @@ public class UpdateDocumentsJob {
         setField("dcType", archdoc.getDcType(), soldoc);
         setField("dcFormat", archdoc.getDcFormat(), soldoc);
         setField("dcSubject", archdoc.getDcSubject(), soldoc);
-        setField("storageLocation", archdoc.getStorageLocation(), soldoc);
+        setField("storageLocation2", archdoc.getstorageLocation2(), soldoc);
         setField("dcIsPartOf", archdoc.getDcIsPartOf(), soldoc);
         setField("sortCode", archdoc.getSortCode(), soldoc);
         //setField("content", archdoc.getContent(), soldoc);

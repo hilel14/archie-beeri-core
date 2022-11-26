@@ -23,7 +23,7 @@ public class ImportFolderForm {
     private Set<String> dcSubjects;
     private String dcType;
     private String dcIsPartOf;
-    private String storageLocation;
+    private String storageLocation2;
     private String dcAccessRights;
     // database fields
     private long importFolderId;
@@ -188,17 +188,17 @@ public class ImportFolderForm {
     }
 
     /**
-     * @return the storageLocation
+     * @return the storageLocation2
      */
-    public String getStorageLocation() {
-        return storageLocation;
+    public String getstorageLocation2() {
+        return storageLocation2;
     }
 
     /**
-     * @param storageLocation the storageLocation to set
+     * @param storageLocation2 the storageLocation2 to set
      */
-    public void setStorageLocation(String storageLocation) {
-        this.storageLocation = storageLocation;
+    public void setstorageLocation2(String storageLocation2) {
+        this.storageLocation2 = storageLocation2;
     }
 
     /**

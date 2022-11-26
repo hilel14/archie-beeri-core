@@ -19,7 +19,7 @@ public class ArchieDocument {
     private String dcType;
     private String dcFormat;
     private Set<String> dcSubject;
-    private String storageLocation;
+    private String storageLocation2;
     private String dcIsPartOf;
     private String dcAccessRights;
     // other fields
@@ -52,8 +52,8 @@ public class ArchieDocument {
         if (map.containsKey("dcSubject")) {
             dcSubject = toSet(map.get("dcSubject"));
         }
-        if (map.containsKey("storageLocation")) {
-            storageLocation = map.get("storageLocation").trim();
+        if (map.containsKey("storageLocation2")) {
+            storageLocation2 = map.get("storageLocation2").trim();
         }
         if (map.containsKey("dcIsPartOf")) {
             dcIsPartOf = map.get("dcIsPartOf").trim();
@@ -190,17 +190,17 @@ public class ArchieDocument {
     }
 
     /**
-     * @return the storageLocation
+     * @return the storageLocation2
      */
-    public String getStorageLocation() {
-        return storageLocation;
+    public String getstorageLocation2() {
+        return storageLocation2;
     }
 
     /**
-     * @param storageLocation the storageLocation to set
+     * @param storageLocation2 the storageLocation2 to set
      */
-    public void setStorageLocation(String storageLocation) {
-        this.storageLocation = storageLocation;
+    public void setstorageLocation2(String storageLocation2) {
+        this.storageLocation2 = storageLocation2;
     }
 
     /**
